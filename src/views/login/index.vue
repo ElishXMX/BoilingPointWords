@@ -10,13 +10,9 @@
     <header class="login-header">
       <div class="container m-top-20">
         <h1 class="logo">
-          <RouterLink to="/">小兔鲜</RouterLink>
+          <RouterLink to="/">沸点单词</RouterLink>
         </h1>
-        <RouterLink class="entry" to="/">
-          进入网站首页
-          <i class="iconfont icon-angle-right"></i>
-          
-        </RouterLink>
+        
       </div>
     </header>
 
@@ -39,6 +35,7 @@
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
+              
               <el-button size="large" class="subBtn" >点击登录</el-button>
             </el-form>
           </div>
@@ -74,26 +71,12 @@
 
     a {
       display: block;
-      height: 132px;
+      height: 75px;
       width: 100%;
       text-indent: -9999px;
       background: url("@/assets/images/logo.png") no-repeat center 18px / contain;
     }
   }
-
-  .sub {
-    flex: 1;
-    font-size: 24px;
-    font-weight: normal;
-    margin-bottom: 38px;
-    margin-left: 20px;
-    color: #666;
-  }
-
-  .entry {
-    width: 120px;
-    margin-bottom: 38px;
-    font-size: 16px;
 
     i {
       font-size: 14px;
@@ -101,7 +84,7 @@
       letter-spacing: -5px;
     }
   }
-}
+
 
 .login-section {
   background: url('@/assets/images/login-bg.png') no-repeat center / cover;
@@ -141,27 +124,6 @@
   }
 }
 
-.login-footer {
-  padding: 30px 0 50px;
-  background: #fff;
-
-  p {
-    text-align: center;
-    color: #999;
-    padding-top: 20px;
-
-    a {
-      line-height: 1;
-      padding: 0 10px;
-      color: #999;
-      display: inline-block;
-
-      ~a {
-        border-left: 1px solid #ccc;
-      }
-    }
-  }
-}
 
 .account-box {
   .toggle {
@@ -258,7 +220,7 @@
       color: #fff;
       text-align: center;
       line-height: 40px;
-      background: red;
+      background:skyblue;
 
       &.disabled {
         background: #cfcdcd;
@@ -282,7 +244,7 @@
 }
 
 .subBtn {
-  background: red;
+  background: skyblue;
   width: 100%;
   color: #fff;
 }

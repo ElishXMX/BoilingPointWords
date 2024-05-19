@@ -1,6 +1,6 @@
 //axios封装
 import axios from 'axios'
-import { Message } from 'element-ui'
+
 
 const httpInstance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,//此处需配置项目基地址
