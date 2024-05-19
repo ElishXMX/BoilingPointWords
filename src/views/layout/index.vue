@@ -29,7 +29,10 @@
         
         <!-- 页面主体区   -->
         <el-main>
-          <div class="mainTitle">MAIN</div>
+          <div class="mainTitle">
+            <router-view>
+            </router-view>
+          </div>
         </el-main>
       
       
@@ -42,7 +45,7 @@
   
 <style scoped lang="scss">
 .el-header{
-     background-color: #373D41;
+     background-color: $background-color;
      display: flex;
      justify-content: space-between;
      padding-left: 0px;
@@ -68,14 +71,10 @@
   }
 
 
-  .el-aside{
   
-    
-   
-  }
  
   .el-main{
-    background-color: #EAEDF1;
+    background-color: $mainBody-color;
   }
  
 </style>

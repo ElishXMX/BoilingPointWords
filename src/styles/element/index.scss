@@ -1,10 +1,7 @@
 /* 只需要重写你需要的即可 */
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
-    'primary': (
-      // 主色
-      'base': #27ba9b,
-    ),
+    
     'success': (
       // 成功色
       'base': #1dc779,
@@ -21,5 +18,10 @@
       // 错误色
       'base': #cf4444,
     ),
+    'background': 
+    // 背景色 
+      (     
+        'base': #373D41,   
+        ),
   )
 )
