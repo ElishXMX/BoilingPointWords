@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="tableData" style="width: 100%" :row-class-name="ifRemember">
+  <el-table :data="wordsList" style="width: 100% " :row-class-name="ifRemember">
     <el-table-column prop="English" label="English" width="300" />
     <el-table-column prop="Chinese" label="中文" width="300" />
     <el-table-column
@@ -13,6 +13,7 @@
        { text: 'CET6s', value: 'CET6s' }]"
        :filter-method="filterBook"
      />
+
     <el-table-column 
     prop="remember" 
     label="是否记住"
@@ -28,49 +29,19 @@
 
 <script lang="ts" setup>
 import  { TableColumnCtx, TableInstance } from 'element-plus'
-interface User {
-  id: number
-  English: string
-  Chinese: string
-  book: string
-  remember: boolean
-  testTimes: number
-}
-const tableData: User[] = [
-{
-    id: 1,
-    English: 'hello',
-    Chinese: '你好',
-    book: 'CET4',
-    remember: false,
-    testTimes:0,
-  } ,
-  {
-    id:2,
-    English: 'world',
-    Chinese: '世界',
-    book: 'CET4s',
-    remember: true,
-    testTimes:0,
-  },
-  {
-    id:3,
-    English: 'test',
-    Chinese: '测试',
-    book: 'CET6',
-    remember: false,
-    testTimes:0,
-  },
 
-  {
-    id:4,
-    English: 'vue',
-    Chinese: '前端',
-    book: 'CET6s',
-    remember: false,
-    testTimes:0,
-  },
-]
+
+//单词列表引入
+import { useWordsStore} from '@/stores/words'
+const wordsStore = useWordsStore()
+const { wordsList}=storeToRefs(wordsStore)
+console.log(wordsList)
+
+
+
+
+
+
 
 
 // 表格行样式
@@ -89,6 +60,11 @@ const filterRemember = (value: boolean, row: User, column: TableColumnCtx<User>,
 </script>
 
 <style>
+.el-table {
+  max-height: 800px;
+  overflow: auto; 
+
+}
 .el-table .warning-row {
   background-color: red;
 }

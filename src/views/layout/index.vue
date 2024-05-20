@@ -14,8 +14,7 @@
           <img src="" alt="">
           <span>沸点单词</span>
         </div>
-        <!-- 退出登录 -->
-        <el-button type="info" @click="logout">退出</el-button>
+        
        </el-header>
 
 

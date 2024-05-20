@@ -1,12 +1,12 @@
 <template>
      <!-- 表单:选择单词书和数量 -->
-    <el-form :inline="true" :model="Words" class="demo-form-inline">
+    <el-form :inline="true" :model="wantedWords" class="demo-form-inline">
     <el-form-item label="背单词数量">
-        <el-input v-model="Words.number" placeholder="背单词数量" clearable />
+        <el-input v-model="wantedWords.number" placeholder="背单词数量" clearable />
     </el-form-item>
       <el-form-item label="单词书">
         <el-select
-          v-model="Words.book"
+          v-model="wantedWords.book"
           placeholder="单词书"
           clearable
         >
@@ -25,9 +25,11 @@
     
     <div class="flex flex-wrap gap-4 ">
     
-    <el-card style="width: 300px" shadow="hover" class="card">
-        <el-text class="mx-1" size="large">Word</el-text><br>
-        <el-text class="mx-1">单词</el-text><br>
+    <el-card style="width: 300px" shadow="hover" class="card"v-if="currentWord">
+        <el-text class="mx-1" size="large">{{currentWord.English}}</el-text><br>
+        
+        <el-text class="mx-1">{{ currentWord.Chinese }}</el-text><br>
+        
         <el-button type="success" @click="remember">记住</el-button>
         <el-button type="info" @click="forget">忘记</el-button>
         <el-button type="warning" @click="confuse">困惑</el-button>
@@ -43,71 +45,74 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 import { ref, computed,watch } from 'vue';
-const Words = reactive({
-  number: '',
+
+
+const wantedWords = reactive({
+  number:null ,
   book: '',
  
 })
 
+const wantWords = reactive({
+  number:null ,
+  book: '',
+ 
+}) 
+
 const onSubmit = () => {
-  console.log('submit!')
+  wantWords.number = Number(wantedWords.number);
+  wantWords.book = wantedWords.book.trim();
 }
 
 
+//单词列表引入
+import { storeToRefs } from 'pinia'
+import { useWordsStore} from '@/stores/words'
+const wordsStore = useWordsStore()
+const { wordsList}=storeToRefs(wordsStore)
 
-// 假设有一个单词列表
-const words = ref([
-      { word: 'apple', translation: '苹果', status: 'new' },
-      { word: 'banana', translation: '香蕉', status: 'new' },
-      // 更多单词...
-    ]);
+//从单词列表中随机获取单词
+const citeWords = computed(() => {
+  const book = wantWords.book;
+  const number = Number(wantWords.number);
+  const filteredWords = wordsList.value.filter(word => word.book === book);
+  return filteredWords.slice(0, number);
+});
 
-    // 当前单词
-    const currentWord = ref();
+//显示当前单词，从以获取的单词列表中随机获取一个单词
+const currentWord = computed(() => {
+  const words = citeWords.value;
+  const randomIndex = Math.floor(Math.random() * words.length);
+  return words[randomIndex];
+});
 
-    // 根据用户记忆状态过滤单词
-    const filteredWords = computed(() => words.value.filter(word => word.status !== 'remembered'));
+//按键事件绑定
 
-    // 显示下一个单词
-    const showNextWord = () => {
-      if (filteredWords.value.length > 0) {
-        currentWord.value = filteredWords.value[0];
-      }
-    };
 
-    // 单词记忆状态
-    const remember = () => {
-      if (currentWord.value) {
-        currentWord.value.status = 'remembered';
-        currentWord.value = null; // 重置当前单词
-        showNextWord();
-      }
-    };
 
-    const forget = () => {
-      if (currentWord.value) {
-        currentWord.value.status = 'forgotten';
-        currentWord.value.count = (currentWord.value.count || 0) + 1;
-        currentWord.value = null;
-        showNextWord();
-      }
-    };
 
-    const confuse = () => {
-      if (currentWord.value) {
-        currentWord.value.status = 'confused';
-        currentWord.value.count = (currentWord.value.count || 0) + 1;
-        currentWord.value = null;
-        showNextWord();
-      }
-    };
 
-    // 组件挂载时显示第一个单词
-    watch(() => filteredWords.value, (newVal) => {
-      if (newVal.length > 0 && !currentWord.value) {
-        showNextWord();
-      }
-    });
+//remember方法，将当前单词添加到已背单词列表
+const remember = () => {
+  wordsStore.addWord(currentWord.value);
+}
+
+//forget方法，将当前单词从已背单词列表中移除
+const forget = () => {
+  wordsStore.removeWord(currentWord.value);
+}
+
+//confuse方法，将当前单词标记为疑问词
+const confuse = () => {
+  wordsStore.confuseWord(currentWord.value);
+}
+
+//watch监听，当单词列表更新时，重新获取当前单词
+
+
+
+
+
 
 </script>
 
