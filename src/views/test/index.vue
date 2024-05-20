@@ -1,8 +1,8 @@
 <template>
   <!-- 表单:选择单词书和数量 -->
   <el-form :inline="true" :model="Words" class="demo-form-inline">
-    <el-form-item label="背单词数量">
-        <el-input v-model="Words.number" placeholder="背单词数量" clearable />
+    <el-form-item label="测试数量">
+        <el-input v-model="Words.number" placeholder="测试数量" clearable />
     </el-form-item>
       <el-form-item label="单词书">
         <el-select
@@ -27,7 +27,7 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue'
-import { ref, computed,watch } from 'vue';
+
 const Words = reactive({
   number: '',
   book: '',

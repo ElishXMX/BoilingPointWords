@@ -6,6 +6,7 @@ import books from '../views/books/index.vue'
 import cite from '../views/cite/index.vue'
 import test from '../views/test/index.vue'
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -19,13 +20,10 @@ const router = createRouter({
           name: 'home',
           component:home,
         },
+        
         {
-          path: '/books',
-          name: 'books',
+           path: '/books',
           component:books,
-          children: [
-            
-          ]
         },
         {
           path: '/cite',
@@ -46,6 +44,7 @@ const router = createRouter({
       name: 'login',
       component: login
     },
+    
    
   ]
 })

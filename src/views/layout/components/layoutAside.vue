@@ -10,23 +10,13 @@
         :router="true"
       >
       <!-- 单词书 -->
-        <el-sub-menu index="/books">
-          <template #title>
+        <el-menu-item index="/books">
+         
             <el-icon><IEpReading /></el-icon>
             <span>单词书</span>
-          </template>
-          
-          <el-menu-item-group title="四级">
-            <el-menu-item index="/4s"><el-icon><IEpTickets /></el-icon>四级精选</el-menu-item>
-            <el-menu-item index="/4"><el-icon><IEpTickets /></el-icon>四级全收集</el-menu-item>
-          </el-menu-item-group>
-          
-          <el-menu-item-group title="六级">
-            <el-menu-item index="/6s"><el-icon><IEpTickets /></el-icon>六级精选</el-menu-item>
-            <el-menu-item index="/6"><el-icon><IEpTickets /></el-icon>六级全收集</el-menu-item>
-          </el-menu-item-group>
-          
-        </el-sub-menu>
+
+        </el-menu-item>
+
         <el-menu-item index="/cite">
           <el-icon><IEpPostcard /></el-icon>
           <span>背单词</span>
