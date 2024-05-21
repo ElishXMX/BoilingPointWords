@@ -2,7 +2,7 @@
      <!-- 表单:选择单词书和数量 -->
     <el-form :inline="true" :model="wantedWords" class="demo-form-inline">
     <el-form-item label="背单词数量">
-        <el-input v-model="wantedWords.number" placeholder="背单词数量" clearable />
+        <el-input type="number" v-model="wantedWords.number" placeholder="背单词数量" clearable />
     </el-form-item>
       <el-form-item label="单词书">
         <el-select
@@ -49,7 +49,7 @@ import { ref, computed,watch } from 'vue';
 
 
 const wantedWords = reactive({
-  number:null ,
+  number:0,
   book: '',
  
 })
@@ -57,7 +57,7 @@ const wantedWords = reactive({
 
 
 const filterType = ref('');
-const filterQuantity = ref(null);
+const filterQuantity = ref(0);
 //点击按钮
 const onSubmit = () => {
  
@@ -74,6 +74,7 @@ import { storeToRefs } from 'pinia'
 import { useWordsStore} from '@/stores/words'
 const wordsStore = useWordsStore()
 const { wordsList}=storeToRefs(wordsStore)
+import { watchEffect } from 'vue'
 
 //从单词列表中获取所需的单词,并生成一个列表
 
@@ -95,39 +96,42 @@ const { wordsList}=storeToRefs(wordsStore)
     const citeWords = computed(() => {
       const items = filteredArray.value;
       const quantity = filterQuantity.value;
+      console.log('quantity',quantity);
       return items.slice(0, quantity);
     });
 
-    
 
-//显示当前单词，从以获取的单词列表中随机获取一个单词
-const currentWord = computed(() => {
-  if (citeWords.value.length > 0) {
-    const index = Math.floor(Math.random() * citeWords.value.length);
-    return citeWords.value[index];
-  } else {
-    return {English: '没有更多单词了', Chinese: '', remember: null}; 
+
+
+//显示当前单词，从citeWords列表中随机获取一个单词
+const currentWord = ref(null);
+watchEffect(() => {
+  const items = citeWords.value;
+  if (items.length > 0) {
+    const randomIndex = Math.floor(Math.random() * items.length);
+    currentWord.value = items[randomIndex];
+  }else {
+    currentWord.value = { English: "没有更多单词了", Chinese: null, remember: null }
   }
 });
 
 
+
 //当列表变化时，更新当前单词
 
-watch(citeWords, () => {
-  console.log('citeWords changed');
-  currentWord.value;
-});
+
 
 
 //点击记住按钮，将当前单词的remember属性设置为true
 const remember = () => {
   currentWord.value.remember = true;
-  //将当前单词从列表中移除
+  //删除当前单词
   const index = citeWords.value.indexOf(currentWord.value);
   citeWords.value.splice(index, 1);
-  console.log('@@@@@@',citeWords.value);
-  console.log('currentWord.value',currentWord.value);
+  console.log(citeWords.value);
+  console.log(currentWord.value);
 };
+
 
 
 //点击忘记按钮，将当前单词的remember属性设置为false
