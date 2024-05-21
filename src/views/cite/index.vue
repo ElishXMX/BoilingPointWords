@@ -25,7 +25,7 @@
     
     <div class="flex flex-wrap gap-4 ">
     
-    <el-card style="width: 300px" shadow="hover" class="card"v-if="currentWord">
+    <el-card style="width: 300px" shadow="hover" class="card" v-if="currentWord">
         <el-text class="mx-1" size="large">{{currentWord.English}}</el-text><br>
         
         <el-text class="mx-1">{{ currentWord.Chinese }}</el-text><br>
@@ -47,22 +47,26 @@ import { reactive } from 'vue'
 import { ref, computed,watch } from 'vue';
 
 
+
 const wantedWords = reactive({
   number:null ,
   book: '',
  
 })
 
-const wantWords = reactive({
-  number:null ,
-  book: '',
- 
-}) 
 
+
+const filterType = ref('');
+const filterQuantity = ref(null);
+//点击按钮
 const onSubmit = () => {
-  wantWords.number = Number(wantedWords.number);
-  wantWords.book = wantedWords.book.trim();
+ 
+  filterQuantity.value = wantedWords.number;
+  filterType.value = wantedWords.book;
+  console.log('@@@@@@',citeWords.value);
 }
+
+
 
 
 //单词列表引入
@@ -71,43 +75,77 @@ import { useWordsStore} from '@/stores/words'
 const wordsStore = useWordsStore()
 const { wordsList}=storeToRefs(wordsStore)
 
-//从单词列表中随机获取单词
-const citeWords = computed(() => {
-  const book = wantWords.book;
-  const number = Number(wantWords.number);
-  const filteredWords = wordsList.value.filter(word => word.book === book);
-  return filteredWords.slice(0, number);
-});
+//从单词列表中获取所需的单词,并生成一个列表
+
+
+    // 使用 computed 创建计算属性
+ const filteredArray = computed(() => {
+   const items = wordsList;
+   return items.value.filter(item => {
+     // 检查类型是否匹配
+     const typeMatches = wantedWords.book === '' || item.book === filterType.value;
+     // 检查remembered是否为false
+     const remember = item.remember === false;
+     return typeMatches && remember;
+   });
+ })
+   
+
+    // 计算属性的 getter 函数，返回当前背诵的单词列表
+    const citeWords = computed(() => {
+      const items = filteredArray.value;
+      const quantity = filterQuantity.value;
+      return items.slice(0, quantity);
+    });
+
+    
 
 //显示当前单词，从以获取的单词列表中随机获取一个单词
 const currentWord = computed(() => {
-  const words = citeWords.value;
-  const randomIndex = Math.floor(Math.random() * words.length);
-  return words[randomIndex];
+  if (citeWords.value.length > 0) {
+    const index = Math.floor(Math.random() * citeWords.value.length);
+    return citeWords.value[index];
+  } else {
+    return {English: '没有更多单词了', Chinese: '', remember: null}; 
+  }
 });
 
-//按键事件绑定
+
+//当列表变化时，更新当前单词
+
+watch(citeWords, () => {
+  console.log('citeWords changed');
+  currentWord.value;
+});
 
 
-
-
-
-//remember方法，将当前单词添加到已背单词列表
+//点击记住按钮，将当前单词的remember属性设置为true
 const remember = () => {
-  wordsStore.addWord(currentWord.value);
-}
+  currentWord.value.remember = true;
+  //将当前单词从列表中移除
+  const index = citeWords.value.indexOf(currentWord.value);
+  citeWords.value.splice(index, 1);
+  console.log('@@@@@@',citeWords.value);
+  console.log('currentWord.value',currentWord.value);
+};
 
-//forget方法，将当前单词从已背单词列表中移除
+
+//点击忘记按钮，将当前单词的remember属性设置为false
 const forget = () => {
-  wordsStore.removeWord(currentWord.value);
-}
+  currentWord.value.remember = false;
+};
 
-//confuse方法，将当前单词标记为疑问词
+//点击困惑按钮，将当前单词的remember属性设置为null
 const confuse = () => {
-  wordsStore.confuseWord(currentWord.value);
-}
+  currentWord.value.remember = null;
+};
+  
+ 
+  
 
-//watch监听，当单词列表更新时，重新获取当前单词
+
+
+
 
 
 
