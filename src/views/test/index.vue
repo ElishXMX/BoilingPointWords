@@ -2,7 +2,11 @@
   <!-- 表单:选择单词书和数量 -->
   <el-form :inline="true" :model="wantedWords" class="demo-form-inline">
     <el-form-item label="背单词数量">
-        <el-input type="number" v-model="wantedWords.number" placeholder="背单词数量" clearable />
+        <el-input type="number" v-model="wantedWords.number" placeholder="背单词数量" clearable maxlength="100px" />
+    </el-form-item>
+    <el-form-item label="知英选中数量">
+        <el-input type="number" v-model="wantedWords.EnglishNumber" placeholder="知英选中数量" clearable />
+       
     </el-form-item>
       <el-form-item label="单词书">
         <el-select
@@ -28,13 +32,23 @@
   <el-card class="card" shadow="hover">
     <template #header>
       <div class="card-header">
-        <el-text class="mx-1" size="large">{{currentWord.currentWord[0].English}}</el-text><br>
+        <el-text class="mx-1" size="large">{{currentWord[0].Chinese}}</el-text><br>
       </div>
     </template>
-    <!-- 从wordsStore中获取四个单词的中文作为测试卡片内容 -->
 
-    <!-- <p v-for="o in 4" :key="o" class="text item"><el-button  size="large">{{o}}</el-button></p>
-     -->
+    <!-- 从Chineses数组中随机选择四个中文作为测试卡片内容 -->
+
+    <div v-for="(Chinese, index) in Chinese" :key="index" class="card-content">
+      <el-text>{{Chinese}}</el-text>
+    </div>
+    
+    <!-- 从English数组中随机选择四个英文作为测试卡片内容 -->
+
+    <div v-for="(English, index) in English" :key="index" class="card-content">
+      <el-text>{{English}}</el-text>
+    </div>
+    
+    
   </el-card>
 
 
@@ -45,28 +59,115 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue'
-import { useCiteWordsStoreCopy } from '@/stores/wordsStorecopy';
+// import { useCiteWordsStore } from '@/stores/wordsStore';
 import {watch} from 'vue'
 import {useWordsStore} from '@/stores/words';
-import { useCurrentWordStoreCopy } from '@/stores/currentWordcopy';
-const currentWord = useCurrentWordStoreCopy();
-const CiteStore = useCiteWordsStoreCopy();
+import { el } from 'element-plus/es/locale';
+
+
+const citeWords = reactive([]); // 当前背诵的单词列表
+    // 筛选单词列表
+    function filterWords(number=0 , book) {
+        const wordsStore = useWordsStore();
+        const words = wordsStore.wordsList.filter(word => word.book === book && word.remember === false);
+        // 随机选择number个单词添加到citeWords
+        for (let i = 0; i < number; i++) {
+            const index = Math.floor(Math.random() * words.length);
+            citeWords.push(words[index]);
+            words.splice(index, 1);
+}}
+    // 移除单词
+    function removeWordcite(word) {
+        citeWords.splice(citeWords.indexOf(word), 1);
+
+    }
+    function addWord(word) {
+        citeWords.push(word);
+    }
+// 随机选择一个单词
+function randomWord() {
+        const index = Math.floor(Math.random() * citeWords.length);
+        return citeWords[index];
+    }
+
+
+
+
+// import { useCurrentWordStore } from '@/stores/currentWord';
+// const currentWord = useCurrentWordStore();
+const currentWord = reactive([{English: '没有', Chinese: '更多单词哦',remember: false}])
+
+  function setWord() {
+ 
+    //将获取的单词添加到currentWord数组中
+    currentWord.push(randomWord())
+    
+  }
+  
+  function removeWord() {
+    //将数组中的最后一个单词移除
+    currentWord.pop()
+  }
+
+
 const wantedWords = reactive({
   number: 0,
   book: null,
+  EnglishNumber: 0,
 });
-const wordsStore = useWordsStore();
-watch(CiteStore.citeWords, () => {
-  currentWord.removeWord();
-  currentWord.setWord();
+
+watch(citeWords, () => {
+  removeWord();
+  setWord();
+  updateEnglish();
 })
 
 //点击开始背单词按钮，将wantedWords中的数据传递给store
 const onSubmit = () => {
-  CiteStore.filterWords(wantedWords.number, wantedWords.book);
+  filterWords(wantedWords.number, wantedWords.book);
   console.log(wantedWords);
-  console.log('CiteStore',CiteStore.citeWords);
+  console.log(Chinese);
+  
+
 }
+
+
+const Chinese=reactive([])
+const updateChinese = ()=> {
+//从wordsStore中获取四个不相同的单词中文作为测试卡片内容，并将其添加到Chinese数组中，其中有一个中文与currentWord数组中的中文相同
+Chinese.push(currentWord[0].Chinese)
+const wordsStore = useWordsStore();
+const words = wordsStore.wordsList;
+console.log(words);
+for (let i = 0; i < 3; i++) {
+  const index = Math.floor(Math.random() * words.length);
+  //如果中文已经存在，则重新选择
+  if (Chinese.includes(words[index].Chinese)) {
+    i--;
+  } else {
+    Chinese.push(words[index].Chinese);
+  }
+  
+}}
+
+//从wordsStore中获取四个不相同的单词英文作为测试卡片内容，并将其添加到English数组中，其中有一个中文与currentWord数组中的英文相同
+const English=reactive([])
+const updateEnglish = ()=> {
+//从wordsStore中获取四个不相同的单词英文作为测试卡片内容，并将其添加到English数组中，其中有一个中文与currentWord数组中的英文相同
+English.push(currentWord[0].English)
+const wordsStore = useWordsStore();
+const words = wordsStore.wordsList;
+console.log(words);
+for (let i = 0; i < 3; i++) {
+  const index = Math.floor(Math.random() * words.length);
+  //如果英文已经存在，则重新选择
+  if (English.includes(words[index].English)) {
+    i--;
+  } else {
+    English.push(words[index].English);
+  }
+  
+}}
 
 </script>
 
