@@ -1,9 +1,7 @@
 //pinia store for words
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
-
 import { getWords } from '@/axiosApis/getWordsAPI'
-
 
 getWords().then(res => {
   console.log(res)

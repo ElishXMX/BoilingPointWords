@@ -24,17 +24,11 @@ export const useCiteWordsStore = defineStore('wordsStore',() => {
         citeWords.splice(citeWords.indexOf(word), 1);
 
     }
-
-    // 记住单词
-    function rememberWord(index) {
-        citeWords[index].remember = true;
-        citeWords.splice(index, 1);
+    function addWord(word) {
+        citeWords.push(word);
     }
 
-    // 忘记单词
-    function forgetWord(index) {
-        citeWords[index].remember = false;
-    }
+
 
     // 随机选择一个单词
     function randomWord() {
@@ -46,9 +40,8 @@ export const useCiteWordsStore = defineStore('wordsStore',() => {
         citeWords,
         filterWords,
         removeWord,
-        rememberWord,
-        forgetWord,
-        randomWord
+        randomWord,
+        addWord
     }
 });
 

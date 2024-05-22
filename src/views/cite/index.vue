@@ -27,15 +27,20 @@
     
     <el-card style="width: 300px" shadow="hover" class="card" v-if="CiteStore.citeWords.length>0">
         <el-text class="mx-1" size="large">{{currentWord.currentWord[0].English}}</el-text><br>
-        
-        <el-text class="mx-1">{{ currentWord.currentWord[0].Chinese }}</el-text><br>
-        
-        <el-button type="success" @click="remember">记住</el-button>
-        <el-button type="info" @click="forget">忘记</el-button>
-        <el-button type="warning" @click="confuse">困惑</el-button>
-
+        <div v-if="judge.show">
+          <el-button type="success" @click="ifRemember">记住</el-button>
+          <el-button type="info" @click="ifForget">忘记</el-button>
+          <el-button type="warning" @click="ifConfuse">困惑</el-button>
+        </div>
+        <el-text class="mx-1" v-if="judge.showChinese">{{ currentWord.currentWord[0].Chinese }}</el-text><br>
+        <div v-if="judge.showTure">
+          <el-button type="success" @click="remember">记对了</el-button>
+          <el-button type="info" @click="forget">记错了</el-button>
+        </div>
+        <el-button type="info" @click="forget" v-if="judge.showNextForget">下一个</el-button>
+        <el-button type="warning" @click="confuse" v-if="judge.showNextConfuse">下一个</el-button>
     </el-card>
-    
+    <el-text class="mx-1" size="large" v-if="judge.showEnd && CiteStore.citeWords.length==0">！恭喜完成所有单词学习！</el-text>
     </div>
     
     
@@ -47,41 +52,77 @@ import { reactive } from 'vue'
 import { useCiteWordsStore } from '@/stores/wordsStore';
 import {watch} from 'vue'
 import { useCurrentWordStore } from '@/stores/currentWord';
-
 const currentWord = useCurrentWordStore();
-
 const CiteStore = useCiteWordsStore();
-
 const wantedWords = reactive({
   number: 0,
   book: null,
 });
+watch(CiteStore.citeWords, () => {
+  currentWord.removeWord();
+  currentWord.setWord();
+})
 
-//组件挂载后，获取当前单词
 
+//以下为所有点击事件的逻辑
 //点击开始背单词按钮，将wantedWords中的数据传递给store
 const onSubmit = () => {
   CiteStore.filterWords(wantedWords.number, wantedWords.book);
   console.log(wantedWords);
   console.log('CiteStore',CiteStore.citeWords);
-  
+  judge.showEnd = true;
 }
-
-
-watch(CiteStore.citeWords, () => {
-  currentWord.removeWord();
-  currentWord.setWord();
-  
-
+const judge = reactive({
+  show:true,
+  showChinese:false,
+  showTure:false,
+  showNextForget:false,
+  showNextConfuse:false,
+  showEnd:false,
 })
+const ifRemember = () => {
+  console.log('ifRemember被调用');
+  judge.show = false;
+  judge.showChinese = true;
+  judge.showTure = true;
+}
+const ifForget = () => {
+  console.log('forget被调用');
+  judge.show = false;
+  judge.showChinese = true;
+  judge.showNextForget = true;
 
+}
+const ifConfuse= () => {
+  judge.show = false;
+  judge.showChinese = true;
+  judge.showNextConfuse = true;
+}
 //点击记住按钮，将当前单词从待背单词中移除
 const remember = () => {
   CiteStore.removeWord(currentWord.currentWord[0]);
-  console.log('removeWord被调用');
   currentWord.currentWord[0].remember = true;
+  judge.show = true;
+  judge.showChinese = false;
+  judge.showTure = false;
 }
-
+//点击忘记按钮，新增两个当前单词到列表中
+const forget = () => {
+  CiteStore.addWord(currentWord.currentWord[0]);
+  currentWord.currentWord[0].remember=false;
+  judge.show = true; 
+  judge.showTure = false;
+  judge.showChinese = false;
+  judge.showNextForget = false;
+}
+//点击困惑按钮，新增个当前单词到列表中
+const confuse = () => {
+  CiteStore.removeWord(currentWord.currentWord[0]);
+  CiteStore.addWord(currentWord.currentWord[0]);
+  judge.show = true; 
+  judge.showChinese = false;
+  judge.showNextConfuse = false;
+}
 </script>
 
 <style>

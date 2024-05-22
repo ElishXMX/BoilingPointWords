@@ -1,12 +1,12 @@
 <template>
   <!-- 表单:选择单词书和数量 -->
-  <el-form :inline="true" :model="Words" class="demo-form-inline">
-    <el-form-item label="测试数量">
-        <el-input v-model="Words.number" placeholder="测试数量" clearable />
+  <el-form :inline="true" :model="wantedWords" class="demo-form-inline">
+    <el-form-item label="背单词数量">
+        <el-input type="number" v-model="wantedWords.number" placeholder="背单词数量" clearable />
     </el-form-item>
       <el-form-item label="单词书">
         <el-select
-          v-model="Words.book"
+          v-model="wantedWords.book"
           placeholder="单词书"
           clearable
         >
@@ -18,7 +18,7 @@
       </el-form-item>
       
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">开始测试</el-button>
+        <el-button type="primary" @click="onSubmit">开始背单词</el-button>
       </el-form-item>
     </el-form>
 
@@ -28,11 +28,13 @@
   <el-card class="card" shadow="hover">
     <template #header>
       <div class="card-header">
-        <span>CurrentlyWord</span>
+        <el-text class="mx-1" size="large">{{currentWord.currentWord[0].English}}</el-text><br>
       </div>
     </template>
-    <p v-for="o in 4" :key="o" class="text item"><el-button  size="large">{{o}}</el-button></p>
-    
+    <!-- 从wordsStore中获取四个单词的中文作为测试卡片内容 -->
+
+    <!-- <p v-for="o in 4" :key="o" class="text item"><el-button  size="large">{{o}}</el-button></p>
+     -->
   </el-card>
 
 
@@ -43,16 +45,29 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue'
-
-const Words = reactive({
-  number: '',
-  book: '',
- 
+import { useCiteWordsStoreCopy } from '@/stores/wordsStorecopy';
+import {watch} from 'vue'
+import {useWordsStore} from '@/stores/words';
+import { useCurrentWordStoreCopy } from '@/stores/currentWordcopy';
+const currentWord = useCurrentWordStoreCopy();
+const CiteStore = useCiteWordsStoreCopy();
+const wantedWords = reactive({
+  number: 0,
+  book: null,
+});
+const wordsStore = useWordsStore();
+watch(CiteStore.citeWords, () => {
+  currentWord.removeWord();
+  currentWord.setWord();
 })
 
+//点击开始背单词按钮，将wantedWords中的数据传递给store
 const onSubmit = () => {
-  console.log('submit!')
+  CiteStore.filterWords(wantedWords.number, wantedWords.book);
+  console.log(wantedWords);
+  console.log('CiteStore',CiteStore.citeWords);
 }
+
 </script>
 
 <style lang="scss">
