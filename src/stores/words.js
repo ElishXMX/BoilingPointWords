@@ -2,8 +2,12 @@
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 
+import { getWords } from '@/axiosApis/getWordsAPI'
 
 
+getWords().then(res => {
+  console.log(res)
+})
 export const useWordsStore = defineStore('words',() => {
   // state
   const wordsList = reactive([{
@@ -425,6 +429,7 @@ export const useWordsStore = defineStore('words',() => {
       wordsList.splice(index, 1)
     }
   }
+ 
 
   return {
     wordsList,

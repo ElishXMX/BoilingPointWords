@@ -25,10 +25,10 @@
     
     <div class="flex flex-wrap gap-4 ">
     
-    <el-card style="width: 300px" shadow="hover" class="card" v-if="currentWord">
-        <el-text class="mx-1" size="large">{{currentWord.English}}</el-text><br>
+    <el-card style="width: 300px" shadow="hover" class="card" >
+        <el-text class="mx-1" size="large">{{currentWord.currentWord[0].English}}</el-text><br>
         
-        <el-text class="mx-1">{{ currentWord.Chinese }}</el-text><br>
+        <el-text class="mx-1">{{ currentWord.currentWord[0].Chinese }}</el-text><br>
         
         <el-button type="success" @click="remember">记住</el-button>
         <el-button type="info" @click="forget">忘记</el-button>
@@ -44,117 +44,41 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue'
-import { ref, computed,watch } from 'vue';
+import { useCiteWordsStore } from '@/stores/wordsStore';
+import {watch} from 'vue'
+import { useCurrentWordStore } from '@/stores/currentWord';
 
+const currentWord = useCurrentWordStore();
 
+const CiteStore = useCiteWordsStore();
 
 const wantedWords = reactive({
-  number:0,
-  book: '',
- 
-})
+  number: 0,
+  book: null,
+});
 
+//组件挂载后，获取当前单词
 
-
-const filterType = ref('');
-const filterQuantity = ref(0);
-//点击按钮
+//点击开始背单词按钮，将wantedWords中的数据传递给store
 const onSubmit = () => {
- 
-  filterQuantity.value = wantedWords.number;
-  filterType.value = wantedWords.book;
-  console.log('@@@@@@',citeWords.value);
+  CiteStore.filterWords(wantedWords.number, wantedWords.book);
+  console.log(wantedWords);
+  console.log('CiteStore',CiteStore.citeWords);
+  
 }
 
 
+watch(CiteStore.citeWords, () => {
+  currentWord.removeWord();
+  currentWord.setWord();
 
+})
 
-//单词列表引入
-import { storeToRefs } from 'pinia'
-import { useWordsStore} from '@/stores/words'
-const wordsStore = useWordsStore()
-const { wordsList}=storeToRefs(wordsStore)
-import { watchEffect } from 'vue'
-
-//从单词列表中获取所需的单词,并生成一个列表
-
-
-    // 使用 computed 创建计算属性
- const filteredArray = computed(() => {
-   const items = wordsList;
-   return items.value.filter(item => {
-     // 检查类型是否匹配
-     const typeMatches = wantedWords.book === '' || item.book === filterType.value;
-     // 检查remembered是否为false
-     const remember = item.remember === false;
-     return typeMatches && remember;
-   });
- })
-   
-
-    // 计算属性的 getter 函数，返回当前背诵的单词列表
-    const citeWords = computed(() => {
-      const items = filteredArray.value;
-      const quantity = filterQuantity.value;
-      console.log('quantity',quantity);
-      return items.slice(0, quantity);
-    });
-
-
-
-
-//显示当前单词，从citeWords列表中随机获取一个单词
-const currentWord = ref(null);
-watchEffect(() => {
-  const items = citeWords.value;
-  if (items.length > 0) {
-    const randomIndex = Math.floor(Math.random() * items.length);
-    currentWord.value = items[randomIndex];
-  }else {
-    currentWord.value = { English: "没有更多单词了", Chinese: null, remember: null }
-  }
-});
-
-
-
-//当列表变化时，更新当前单词
-
-
-
-
-//点击记住按钮，将当前单词的remember属性设置为true
+//点击记住按钮，将当前单词添加到已背单词列表
 const remember = () => {
-  currentWord.value.remember = true;
-  //删除当前单词
-  const index = citeWords.value.indexOf(currentWord.value);
-  citeWords.value.splice(index, 1);
-  console.log(citeWords.value);
-  console.log(currentWord.value);
-};
-
-
-
-//点击忘记按钮，将当前单词的remember属性设置为false
-const forget = () => {
-  currentWord.value.remember = false;
-};
-
-//点击困惑按钮，将当前单词的remember属性设置为null
-const confuse = () => {
-  currentWord.value.remember = null;
-};
-  
- 
-  
-
-
-
-
-
-
-
-
-
+  CiteStore.rememberWord(currentWord);
+  CiteStore.removeWord(currentWord);
+}
 
 </script>
 
@@ -167,27 +91,5 @@ const confuse = () => {
   --el-select-width: 220px;
 }
 
-.card {
-  display: flex;
-  position: relative;
-  /* 居中 */
-  top: 50%;
-  left: 50%;
-  margin-top:25% ;
-  transform: translate(-50%, -50%);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 250px;
-  padding: 20px;
-  font-size: 24px;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  /* 文字大小 */
-  text-align: center;
-  line-height: 2;
-  /* 文字阴影 */
-}
+
 </style>
