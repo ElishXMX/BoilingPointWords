@@ -20,10 +20,9 @@ export const useCiteWordsStore = defineStore('wordsStore',() => {
     }
 
     // 移除单词
-    function removeWord(index) {
-        if (index >= 0 && index < citeWords.length) {
-            citeWords.splice(index, 1);
-        }
+    function removeWord(word) {
+        citeWords.splice(citeWords.indexOf(word), 1);
+
     }
 
     // 记住单词

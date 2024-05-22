@@ -25,7 +25,7 @@
     
     <div class="flex flex-wrap gap-4 ">
     
-    <el-card style="width: 300px" shadow="hover" class="card" >
+    <el-card style="width: 300px" shadow="hover" class="card" v-if="CiteStore.citeWords.length>0">
         <el-text class="mx-1" size="large">{{currentWord.currentWord[0].English}}</el-text><br>
         
         <el-text class="mx-1">{{ currentWord.currentWord[0].Chinese }}</el-text><br>
@@ -71,13 +71,15 @@ const onSubmit = () => {
 watch(CiteStore.citeWords, () => {
   currentWord.removeWord();
   currentWord.setWord();
+  
 
 })
 
-//点击记住按钮，将当前单词添加到已背单词列表
+//点击记住按钮，将当前单词从待背单词中移除
 const remember = () => {
-  CiteStore.rememberWord(currentWord);
-  CiteStore.removeWord(currentWord);
+  CiteStore.removeWord(currentWord.currentWord[0]);
+  console.log('removeWord被调用');
+  currentWord.currentWord[0].remember = true;
 }
 
 </script>

@@ -4,9 +4,10 @@ import { reactive } from 'vue'
 
 
 
+
 export const useCurrentWordStore = defineStore('currentWord', ()=> {
   
-    const currentWord = reactive([{English: '没有', Chinese: '更多单词哦'}])
+    const currentWord = reactive([{English: '没有', Chinese: '更多单词哦',remember: false}])
 
   function setWord() {
     const citeWords = useCiteWordsStore()
@@ -14,6 +15,7 @@ export const useCurrentWordStore = defineStore('currentWord', ()=> {
     currentWord.push(citeWords.randomWord())
     
   }
+  
   function removeWord() {
     //将数组中的最后一个单词移除
     currentWord.pop()
