@@ -1,13 +1,65 @@
-<script setup>
-// 表单校验（账号名+密码）
+<template>
+  <el-container class="home-container">
+       <!--头部  -->
+       <el-header>
+        <div>
+          <img src="" alt="">
+          <span>沸点单词</span>
+        </div>
+        
+       </el-header>
 
+
+       <!-- 页面主体区  嵌套容器  包裹 Aside与Main -->
+       <el-container class="main-container">
+        
+        
+        <!-- 页面主体区   -->
+        <el-form
+          ref="formRef"
+          style="max-width: 600px"
+          :model="form"
+          status-icon
+          :rules="rules"
+          label-width="auto"
+          class="demo-ruleForm"
+        >
+            <h1>登录</h1>
+          <el-form-item label="账户" prop="account">
+            <el-input v-model="form.account" />
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="form.password"/>
+          </el-form-item>
+          <el-form-item prop="agree" label-width="22px">
+          <el-checkbox v-model="form.agree" size="large">
+            我已同意隐私条款和服务条款
+          </el-checkbox>
+        </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="doLogin">
+              点击登录
+            </el-button>
+          </el-form-item>
+        </el-form>
+      
+      
+      </el-container>
+             
+   </el-container>
+  
+</template>
+
+<script setup>
 import { ref } from 'vue'
 
 import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
 import { useRouter } from 'vue-router'
 
+import { useUserStore } from '@/stores/userStore'
 
+const userStore = useUserStore()
 
 // 1. 准备表单对象
 const form = ref({
@@ -61,267 +113,54 @@ const doLogin = () => {
     }
   })
 }
-
-
 </script>
 
 
-<template>
-  <div>
-    <header class="login-header">
-      <div class="container m-top-20">
-        <h1 class="logo">
-          <RouterLink to="/">小兔鲜</RouterLink>
-        </h1>
-        <RouterLink class="entry" to="/">
-          进入网站首页
-          <i class="iconfont icon-angle-right"></i>
-          <i class="iconfont icon-angle-right"></i>
-        </RouterLink>
-      </div>
-    </header>
-    <section class="login-section">
-      <div class="wrapper">
-        <nav>
-          <a href="javascript:;">账户登录</a>
-        </nav>
-        <div class="account-box">
-          <div class="form">
-            <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="60px" status-icon>
-              <el-form-item prop="account" label="账户">
-                <el-input v-model="form.account" />
-              </el-form-item>
-              <el-form-item prop="password" label="密码">
-                <el-input v-model="form.password" />
-              </el-form-item>
-              <el-form-item prop="agree" label-width="22px">
-                <el-checkbox size="large" v-model="form.agree">
-                  我已同意隐私条款和服务条款
-                </el-checkbox>
-              </el-form-item>
-              <el-button size="large" class="subBtn" @click="doLogin">点击登录</el-button>
-            </el-form>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="login-footer">
-      <div class="container">
-        <p>
-          <a href="javascript:;">关于我们</a>
-          <a href="javascript:;">帮助中心</a>
-          <a href="javascript:;">售后服务</a>
-          <a href="javascript:;">配送与验收</a>
-          <a href="javascript:;">商务合作</a>
-          <a href="javascript:;">搜索推荐</a>
-          <a href="javascript:;">友情链接</a>
-        </p>
-        <p>CopyRight &copy; 小兔鲜儿</p>
-      </div>
-    </footer>
-  </div>
-</template>
-
-<style scoped lang='scss'>
-.login-container {
-  position: relative;
-  height: 100%;
-  min-height: 100vh;
-  width: 100%;
-  background: $mainBody-color;
-  
-}
-.login-header {
-  background:$background-color;
-  border-bottom: 1px solid #e4e4e4;
-
-  .container {
+<style scoped lang="scss">
+.main-container{
+    background-color: $mainBody-color;
+    height: 100%;
+    min-height: 100vh;
+    //居中
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-  }
-
-  .logo {
-    width: 200px;
-
-    a {
-      display: block;
-      height: 75px;
-      width: 100%;
-      text-indent: -9999px;
-      background: url("@/assets/images/logo.png") no-repeat center 18px / contain;
-    }
-  }
-
-    i {
-      font-size: 14px;
-      color: red;
-      letter-spacing: -5px;
-    }
-  }
-
-
-.login-section {
-  background: url('@/assets/images/login-bg.png') no-repeat center / cover;
-  height: 488px;
-  position: relative;
-
-  .wrapper {
-    width: 380px;
-    background: #ffffff62;
-    position: absolute;
-    left: 50%;
-    top: 54px;
-    //水平居中
-    transform: translateX(-50%);
-    
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-
-    nav {
-      font-size: 14px;
-      height: 55px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #f5f5f5;
-      display: flex;
-      padding: 0 40px;
-      text-align: right;
-      align-items: center;
-
-      a {
-        flex: 1;
-        line-height: 1;
-        display: inline-block;
-        font-size: 18px;
-        position: relative;
-        text-align: center;
-      }
-    }
-  }
-}
-
-
-.account-box {
-  .toggle {
-    padding: 15px 40px;
-    text-align: right;
-
-    a {
-      color: red;
-
-      i {
-        font-size: 14px;
-      }
-    }
-  }
-
-  .form {
-    padding: 0 20px 20px 20px;
-
-    &-item {
-      margin-bottom: 28px;
-
-      .input {
-        position: relative;
-        height: 36px;
-
-        >i {
-          width: 34px;
-          height: 34px;
-          background: #cfcdcd;
-          color: #fff;
-          position: absolute;
-          left: 1px;
-          top: 1px;
-          text-align: center;
-          line-height: 34px;
-          font-size: 18px;
-        }
-
-        input {
-          padding-left: 44px;
-          border: 1px solid #cfcdcd;
-          height: 36px;
-          line-height: 36px;
-          width: 100%;
-
-          &.error {
-            border-color: blue;
-          }
-
-          &.active,
-          &:focus {
-            border-color:red;
-          }
-        }
-
-        .code {
-          position: absolute;
-          right: 1px;
-          top: 1px;
-          text-align: center;
-          line-height: 34px;
-          font-size: 14px;
-          background: #f5f5f5;
-          color: #666;
-          width: 90px;
-          height: 34px;
-          cursor: pointer;
-        }
-      }
-
-      >.error {
-        position: absolute;
-        font-size: 12px;
-        line-height: 28px;
-        color: blue;
-
-        i {
-          font-size: 14px;
-          margin-right: 2px;
-        }
-      }
-    }
-
-    .agree {
-      a {
-        color: #069;
-      }
-    }
-
-    .btn {
-      display: block;
-      width: 100%;
-      height: 40px;
-      color: #fff;
-      text-align: center;
-      line-height: 40px;
-      background:skyblue;
-
-      &.disabled {
-        background: #cfcdcd;
-      }
-    }
-  }
-
-  .action {
-    padding: 20px 40px;
-    display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-
-    .url {
-      a {
-        color: #999;
-        margin-left: 10px;
-      }
+}
+.el-header{
+     background-color: $background-color;
+     display: flex;
+     justify-content: space-between;
+     padding-left: 0px;
+    //  居中
+     align-items:center;
+    //  文本颜色
+    color:#fff;
+    // 文字大小
+    font-size: 20px;
+ 
+    // 给header中嵌套的div进行样式改造
+    // 子代选择器
+    div{
+      display:flex;
+    //   纵向居中
+      align-items:center;
+ 
+    //   在给div中的span改造样式
+       span{
+        margin-left: 20px;
+       }
     }
   }
-}
 
-.subBtn {
-  background: skyblue;
-  width: 100%;
-  color: #fff;
-}
+  .el-form{
+    background-color:white;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+ 
+  .el-main{
+    background-color: $mainBody-color;
+  }
+ 
 </style>

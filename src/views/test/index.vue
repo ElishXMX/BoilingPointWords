@@ -62,7 +62,7 @@ import { reactive } from 'vue'
 // import { useCiteWordsStore } from '@/stores/wordsStore';
 import {watch} from 'vue'
 import {useWordsStore} from '@/stores/words';
-import { el } from 'element-plus/es/locale';
+
 
 
 const citeWords = reactive([]); // 当前背诵的单词列表
