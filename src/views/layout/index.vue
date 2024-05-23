@@ -71,9 +71,21 @@
 
 
   
+  .el-main{
+   background-image:url(../../assets/picture/20110328231118.jpg) ;
+    background-size: cover;
+    background-position: center;
+    background-color:rgba(255,255,255,0.8);
+    height: 100%;
+    overflow: hidden;
+  }
  
   .el-main{
     background-color: $mainBody-color;
+  }
+  .el-container{
+    height: 100%;
+   
   }
  
 </style>

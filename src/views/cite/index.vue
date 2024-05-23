@@ -1,8 +1,9 @@
 <template>
      <!-- 表单:选择单词书和数量 -->
-    <el-form :inline="true" :model="wantedWords" class="demo-form-inline">
+    <el-card>
+      <el-form :inline="true" :model="wantedWords" class="demo-form-inline">
     <el-form-item label="背单词数量">
-        <el-input type="number" v-model="wantedWords.number" placeholder="背单词数量" clearable />
+        <el-input-number type="number" v-model="wantedWords.number" placeholder="背单词数量" clearable />
     </el-form-item>
       <el-form-item label="单词书">
         <el-select
@@ -21,19 +22,21 @@
         <el-button type="primary" @click="onSubmit">开始背单词</el-button>
       </el-form-item>
     </el-form>
+    </el-card>
     
     
-    <div class="flex flex-wrap gap-4 ">
-    
-    <el-card style="width: 300px" shadow="hover" class="card" v-if="CiteStore.citeWords.length>0">
-        <el-text class="mx-1" size="large">{{currentWord.currentWord[0].English}}</el-text><br>
-        <div v-if="judge.show">
+    <div class="flex flex-wrap gap-4 " style="margin-top: 100px;">
+   
+
+    <el-card style="width: 300px;height: 400px;" shadow="hover" class="card" v-if="CiteStore.citeWords.length>0">
+        <el-text class="mx-1" size="large" style="font-size: 3rem;">{{currentWord.currentWord[0].English}}</el-text><br>
+        <div v-if="judge.show" style="margin-top: 40px;">
           <el-button type="success" @click="ifRemember">记住</el-button>
           <el-button type="info" @click="ifForget">忘记</el-button>
           <el-button type="warning" @click="ifConfuse">困惑</el-button>
         </div>
-        <el-text class="mx-1" v-if="judge.showChinese">{{ currentWord.currentWord[0].Chinese }}</el-text><br>
-        <div v-if="judge.showTure">
+        <el-text class="mx-1" v-if="judge.showChinese" style="font-size: 1.5rem;">{{ currentWord.currentWord[0].Chinese }}</el-text><br>
+        <div v-if="judge.showTure" style="margin-top: 40px;">
           <el-button type="success" @click="remember">记对了</el-button>
           <el-button type="info" @click="forget">记错了</el-button>
         </div>
@@ -133,6 +136,7 @@ const confuse = () => {
 .demo-form-inline .el-select {
   --el-select-width: 220px;
 }
+
 
 
 </style>

@@ -9,7 +9,7 @@
         
        </el-header>
 
-
+   
        <!-- 页面主体区  嵌套容器  包裹 Aside与Main -->
        <el-container class="main-container">
         
@@ -24,7 +24,6 @@
           label-width="auto"
           class="demo-ruleForm"
         >
-            <h1>登录</h1>
           <el-form-item label="账户" prop="account">
             <el-input v-model="form.account" />
           </el-form-item>
@@ -59,12 +58,13 @@ import { useRouter } from 'vue-router'
 
 import { useUserStore } from '@/stores/userStore'
 
+
 const userStore = useUserStore()
 
 // 1. 准备表单对象
 const form = ref({
-  account: '18610848230',
-  password: '123456',
+  account: '',
+  password: '',
   agree: true
 })
 
@@ -75,7 +75,7 @@ const rules = {
   ],
   password: [
     { required: true, message: '密码不能为空', trigger: 'blur' },
-    { min: 6, max: 14, message: '密码长度为6-14个字符', trigger: 'blur' },
+    { min: 3, max: 14, message: '密码长度为6-14个字符', trigger: 'blur' },
   ],
   agree: [
     {
@@ -105,11 +105,17 @@ const doLogin = () => {
     // 以valid做为判断条件 如果通过校验才执行登录逻辑
     if (valid) {
       // TODO LOGIN
-      await userStore.getUserInfo({ account, password })
+      const res = await userStore.getUserInfo({ account, password })
+      console.log(res)
+      console.log(res.code)
+      if (res.code == 0) {
       // 1. 提示用户
-      ElMessage({ type: 'success', message: '登录成功' })
-      // 2. 跳转首页
+      ElMessage.success('登录成功')
+      // 2. 跳转到首页
       router.replace({ path: '/' })
+          }else{
+       ElMessage.error('登录失败') }
+     
     }
   })
 }
@@ -125,6 +131,10 @@ const doLogin = () => {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-image: url(../../assets/picture/01ef625bfd2343a8012092521e3779.jpg@3000w_1l_0o_100sh.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 .el-header{
      background-color: $background-color;
@@ -153,9 +163,13 @@ const doLogin = () => {
   }
 
   .el-form{
-    background-color:white;
+    height:300px;
+    width: 400px;
+    background-color:rgba(255,255,255,0.8);
     padding: 20px;
     border-radius: 10px;
+    backdrop-filter: blur(10px);
+  
   }
   
  

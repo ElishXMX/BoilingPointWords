@@ -418,6 +418,7 @@ export const useWordsStore = defineStore('words',() => {
 
   // actions
   function addWord(word) {
+    //网络请求
     wordsList.push(word)
   }
 
@@ -434,6 +435,7 @@ export const useWordsStore = defineStore('words',() => {
     addWord,
     removeWord,
   }
+  
 })
 
 

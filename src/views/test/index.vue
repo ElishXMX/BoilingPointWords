@@ -1,11 +1,12 @@
 <template>
   <!-- 表单:选择单词书和数量 -->
-  <el-form :inline="true" :model="wantedWords" class="demo-form-inline">
+  <el-card>
+    <el-form :inline="true" :model="wantedWords" class="demo-form-inline">
     <el-form-item label="背单词数量">
-        <el-input type="number" v-model="wantedWords.number" placeholder="背单词数量" clearable maxlength="100px" />
+        <el-input-number type="number" v-model="wantedWords.number" placeholder="背单词数量" clearable maxlength="100px" />
     </el-form-item>
     <el-form-item label="知英选中数量">
-        <el-input type="number" v-model="wantedWords.EnglishNumber" placeholder="知英选中数量" clearable />
+        <el-input-number type="number" v-model="wantedWords.EnglishNumber" placeholder="知英选中数量" clearable />
        
     </el-form-item>
       <el-form-item label="单词书">
@@ -25,28 +26,67 @@
         <el-button type="primary" @click="onSubmit">开始背单词</el-button>
       </el-form-item>
     </el-form>
+  </el-card>
+
+<!-- 统计测试得分 -->
+<el-card class="card" v-show="citeWords.length!=0" >
+      <el-col :span="6" style="width: 200px;display:inline-block">
+        <el-statistic :value="numberUsed">
+          <template #title>
+            <div style="display: inline-flex; align-items: center">
+              单词计数
+              <el-icon style="margin-left: 4px" :size="12">
+                <Male />
+              </el-icon>
+            </div>
+          </template>
+          <template #suffix>/{{ wantedWords.number }}</template>
+        </el-statistic>
+      </el-col>
+
+
+      <el-col :span="8" style="width: 200px;display:inline-block">
+      <el-countdown title="Start to grab" :value="remainTime" />
+      </el-col>
+
+
+
+  </el-card>
+
+
+
+
+
 
 
 <!-- 测试卡片 -->
 
-  <el-card class="card" shadow="hover">
+  <el-card class="card" shadow="hover" v-if="citeWords.length!=0">
     <template #header>
-      <div class="card-header">
-        <el-text class="mx-1" size="large">{{currentWord[0].Chinese}}</el-text><br>
+      <div class="card-header" v-if="judgesNumber.number%2===1">
+        <el-text class="mx-1" size="large" style="font-size: 2.5rem;">{{currentWord[0].English}}</el-text><br>
+      </div>
+      <div class="card-header" v-else>
+        <el-text class="mx-1" size="large" style="font-size: 2.5rem;">{{currentWord[0].Chinese}}</el-text><br>
       </div>
     </template>
 
     <!-- 从Chineses数组中随机选择四个中文作为测试卡片内容 -->
-
-    <div v-for="(Chinese, index) in Chinese" :key="index" class="card-content">
-      <el-text>{{Chinese}}</el-text>
+    <div v-if="judgesNumber.number %2===1">
+    <div v-for="(Chinese, index) in Chinese" :key="index" class="card-content" >
+      <el-button :type="buttonType"  plain @click="ifChineseRight(Chinese)" style="width: 100px;">
+        {{Chinese}}
+      </el-button>
     </div>
-    
+  </div>
     <!-- 从English数组中随机选择四个英文作为测试卡片内容 -->
-
-    <div v-for="(English, index) in English" :key="index" class="card-content">
-      <el-text>{{English}}</el-text>
+    <div v-else>
+      <div v-for="(English, index) in English" :key="index" class="card-content">
+      <el-button :type="buttonType"  plain  @click="ifEnglishRight(English)" style="width: 100px;">{{English}}</el-button>
     </div>
+    </div>
+
+    <!--  -->
     
     
   </el-card>
@@ -58,18 +98,45 @@
 
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive,ref } from 'vue'
 // import { useCiteWordsStore } from '@/stores/wordsStore';
 import {watch} from 'vue'
 import {useWordsStore} from '@/stores/words';
 
 
+//获取wantedWords.Number个数字，其中有wantedWords.EnglishNumber个奇数,将其放入judges数组中，并将其随机排序
+const judges=reactive([])
+const getJudges = ()=> {
+  for (let i = 0; i <= wantedWords.EnglishNumber; i++) {
+    if (i % 2 === 0) {
+      judges.push(i + 1);
+    }
+  }
+  //jugde数组长度小于wantedWords.number时，用偶数补足剩下的数字
+  while (judges.length < wantedWords.number) {
+    //获取偶数
+    const even = Math.floor(Math.random() * (wantedWords.number - judges.length)) * 2;
+    judges.push(even);
+  }
+    
+  judges.sort(() => Math.random() - 0.5);
+}
+
+const index = ref(-1)
+const judgesNumber = reactive({number:0})
+function nextJudge() {
+  index.value++
+  judgesNumber.number= judges[index.value]
+}
+
+const numberUsed = ref(0) // 已使用单词数量
+const remainTime = ref(Date.now() + 1000 * 60 * 60 * 7)
 
 const citeWords = reactive([]); // 当前背诵的单词列表
     // 筛选单词列表
     function filterWords(number=0 , book) {
         const wordsStore = useWordsStore();
-        const words = wordsStore.wordsList.filter(word => word.book === book && word.remember === false);
+        const words = wordsStore.wordsList.filter(word => word.book === book );
         // 随机选择number个单词添加到citeWords
         for (let i = 0; i < number; i++) {
             const index = Math.floor(Math.random() * words.length);
@@ -81,11 +148,8 @@ const citeWords = reactive([]); // 当前背诵的单词列表
         citeWords.splice(citeWords.indexOf(word), 1);
 
     }
-    function addWord(word) {
-        citeWords.push(word);
-    }
 // 随机选择一个单词
-function randomWord() {
+    function randomWord() {
         const index = Math.floor(Math.random() * citeWords.length);
         return citeWords[index];
     }
@@ -95,13 +159,13 @@ function randomWord() {
 
 // import { useCurrentWordStore } from '@/stores/currentWord';
 // const currentWord = useCurrentWordStore();
-const currentWord = reactive([{English: '没有', Chinese: '更多单词哦',remember: false}])
+const currentWord = reactive([{English: '没有', Chinese: '更多单词哦',remember: false,testTimes: 0}])
 
   function setWord() {
  
     //将获取的单词添加到currentWord数组中
     currentWord.push(randomWord())
-    
+   
   }
   
   function removeWord() {
@@ -117,38 +181,65 @@ const wantedWords = reactive({
 });
 
 watch(citeWords, () => {
+  console.log('citeWords',citeWords);
+  console.log('currentWord',currentWord);
   removeWord();
   setWord();
+  cleanChinese();
+  cleanEnglish();
+  
+  nextJudge();
+ 
+  console.log(judges);
+  console.log(' 开始背单词',judgesNumber.number);
+  if (citeWords.length === 0) {
+    console.log('没有单词了');
+  }else{
+  updateChinese();
   updateEnglish();
+  }
+  
+ 
 })
 
 //点击开始背单词按钮，将wantedWords中的数据传递给store
 const onSubmit = () => {
-  filterWords(wantedWords.number, wantedWords.book);
-  console.log(wantedWords);
-  console.log(Chinese);
-  
-
+  if (!wantedWords.book) {
+        $message.error('请选择单词书');
+      } else {
+        // 执行开始背单词的逻辑
+        filterWords(wantedWords.number, wantedWords.book);
+        getJudges();
+      }
 }
 
 
 const Chinese=reactive([])
 const updateChinese = ()=> {
 //从wordsStore中获取四个不相同的单词中文作为测试卡片内容，并将其添加到Chinese数组中，其中有一个中文与currentWord数组中的中文相同
-Chinese.push(currentWord[0].Chinese)
-const wordsStore = useWordsStore();
-const words = wordsStore.wordsList;
-console.log(words);
-for (let i = 0; i < 3; i++) {
-  const index = Math.floor(Math.random() * words.length);
-  //如果中文已经存在，则重新选择
-  if (Chinese.includes(words[index].Chinese)) {
-    i--;
-  } else {
-    Chinese.push(words[index].Chinese);
-  }
-  
-}}
+         if (citeWords.length > 0) {
+          Chinese.push(currentWord[0].Chinese)
+            const wordsStore = useWordsStore();
+            const words = wordsStore.wordsList;
+            for (let i = 0; i < 3; i++) {
+              const index = Math.floor(Math.random() * words.length);
+              //如果中文已经存在，则重新选择
+              if (Chinese.includes(words[index].Chinese)) {
+                i--;
+              } else {
+                Chinese.push(words[index].Chinese);
+              }
+            }
+            //将Chinese数组的顺序随机打乱
+            Chinese.sort(() => Math.random() - 0.5);
+            
+        } else {
+            Chinese.push({English: '没有', Chinese: '更多单词哦',remember: false,testTimes: 0} )
+        }
+      }
+
+
+function cleanChinese() {Chinese.splice(0,Chinese.length)}
 
 //从wordsStore中获取四个不相同的单词英文作为测试卡片内容，并将其添加到English数组中，其中有一个中文与currentWord数组中的英文相同
 const English=reactive([])
@@ -157,7 +248,6 @@ const updateEnglish = ()=> {
 English.push(currentWord[0].English)
 const wordsStore = useWordsStore();
 const words = wordsStore.wordsList;
-console.log(words);
 for (let i = 0; i < 3; i++) {
   const index = Math.floor(Math.random() * words.length);
   //如果英文已经存在，则重新选择
@@ -169,37 +259,129 @@ for (let i = 0; i < 3; i++) {
   
 }}
 
+
+const buttonType = ref('primary')
+function cleanEnglish() {English.splice(0,English.length)}
+//判断对错
+function ifChineseRight(Chinese){
+  //延时0.5秒，
+  
+  numberUsed.value++
+  if (Chinese === currentWord[0].Chinese) {
+    console.log('对');
+    //将button的type属性改为success
+    buttonType.value='success'
+    setTimeout(() => {
+      //将button的type属性改为primary
+      buttonType.value='primary'
+      //移除当前测试的单词
+    currentWord[0].remember = true;
+    currentWord[0].testTimes +1
+    console.log(currentWord[0].Chinese);
+    removeWordcite(currentWord[0]);}, 450);
+   
+  } else {
+    buttonType.value='danger'
+    console.log('错');
+    setTimeout(() => {
+      buttonType.value='primary'
+    currentWord[0].remember = false;
+    removeWordcite(currentWord[0]);}, 450);
+    
+  }
+}
+
+function ifEnglishRight(English){
+  numberUsed.value++
+  if (English === currentWord[0].English) {
+    console.log('对');
+    //将button的type属性改为success
+    buttonType.value='success'
+    setTimeout(() => {
+      //将button的type属性改为primary
+      buttonType.value='primary'
+      //移除当前测试的单词
+    currentWord[0].remember = true;
+    currentWord[0].testTimes +1
+    console.log(currentWord[0].English);
+    removeWordcite(currentWord[0]);
+    }, 450);
+   
+  } else {
+    console.log('错');
+    buttonType.value='danger'
+    setTimeout(() => {
+      buttonType.value='primary'
+    currentWord[0].remember = false;
+    currentWord[0].remember = false;
+    removeWordcite(currentWord[0]);
+    }, 450);
+    
+  }
+}
+
+
+
+
+
+
+
+
+
 </script>
 
 <style lang="scss">
-  .card {
-    display: flex;
-    position: relative;
-    /* 居中 */
-    top: 50%;
-    left: 50%;
-    margin-top:25% ;
-    transform: translate(-50%, -50%);
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 450px;
-    width: 400px;
-    padding: 20px;
-    font-size: 24px;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+  // .card {
+  //   display: flex;
+  //   position: relative;
+  //   /* 居中 */
+  //   top: 50%;
+  //   left: 50%;
+  //   margin-top:25% ;
+  //   transform: translate(-50%, -50%);
+  //   flex-direction: column;
+  //   align-items: center;
+  //   justify-content: center;
+  //   height: 450px;
+  //   width: 400px;
+  //   padding: 20px;
+  //   font-size: 24px;
+  //   color: #333;
+  //   border: 1px solid #ccc;
+  //   border-radius: 4px;
     
-    /* 文字大小 */
-    text-align: center;
-    line-height: 2;
-    /* 文字阴影 */
-    text-shadow: 1px 1px 1px #ccc;
-    el-button {
-      margin-right: 10px;
-      margin-bottom: 10px;  
-      min-width: 200px;
+  //   /* 文字大小 */
+  //   text-align: center;
+  //   line-height: 2;
+  //   /* 文字阴影 */
+  //   text-shadow: 1px 1px 1px #ccc;
+  //   el-button {
+  //     margin-right: 10px;
+  //     margin-bottom: 10px;  
+  //     min-width: 200px;
+  // }
+  // }
+  .el-form {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
   }
+
+  .card {
+    max-width: 400px;
+    text-align: center;
+    //左右居中，卡片不重叠
+    margin: 0 auto;
+    margin-top: 20px;
+    // 卡片阴影
+    //行高
+    line-height: 3.5;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+
+   
+
+
+    
+   
   }
 </style>

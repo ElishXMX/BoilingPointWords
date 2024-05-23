@@ -7,7 +7,7 @@ export const loginAPI = ({ account, password }) => {
     method: 'POST',
     data: {
       account,
-      password
+      password,
     }
   })
 }
