@@ -25,15 +25,23 @@
     />
     <el-table-column prop="testTimes" label="测试次数" width="120"/>
   </el-table>
-</template>
+
+  </template>
 
 <script lang="ts" setup>
 import  { TableColumnCtx, TableInstance } from 'element-plus'
-
+import { onMounted, ref, } from 'vue'
+import { getWordsAPI } from '@/apis/getWordsAPI';
 
 //单词列表引入
 import { useWordsStore} from '@/stores/words'
 const wordsStore = useWordsStore()
+//挂载组件时使用axios请求数据
+
+onMounted(async () => {
+  await wordsStore.getWordsList()
+})
+
 const { wordsList}=storeToRefs(wordsStore)
 console.log(wordsList)
 

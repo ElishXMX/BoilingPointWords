@@ -64,10 +64,10 @@
   <el-card class="card" shadow="hover" v-if="citeWords.length!=0">
     <template #header>
       <div class="card-header" v-if="judgesNumber.number%2===1">
-        <el-text class="mx-1" size="large" style="font-size: 2.5rem;">{{currentWord[0].English}}</el-text><br>
+        <el-text class="mx-1" size="large" style="font-size: 2rem;">{{currentWord[0].English}}</el-text><br>
       </div>
       <div class="card-header" v-else>
-        <el-text class="mx-1" size="large" style="font-size: 2.5rem;">{{currentWord[0].Chinese}}</el-text><br>
+        <el-text class="mx-1" size="large" style="font-size: 2rem;">{{currentWord[0].Chinese}}</el-text><br>
       </div>
     </template>
 

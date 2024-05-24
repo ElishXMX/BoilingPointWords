@@ -131,10 +131,21 @@ const doLogin = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url(../../assets/picture/01ef625bfd2343a8012092521e3779.jpg@3000w_1l_0o_100sh.jpg);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: linear-gradient(-45deg, #ee7752, #e7acc3, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  height: 100vh;
+}
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 .el-header{
      background-color: $background-color;

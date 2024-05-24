@@ -72,13 +72,22 @@
 
   
   .el-main{
-   background-image:url(../../assets/picture/20110328231118.jpg) ;
-    background-size: cover;
-    background-position: center;
-    background-color:rgba(255,255,255,0.8);
-    height: 100%;
-    overflow: hidden;
+    background: linear-gradient(-45deg, #faf4c5, #e8d7dd, #cbe9f4, #eae4e4);
+  background-size: 400% 400%;
+  animation: gradient 10s ease infinite;
+  height: 100vh;
   }
+  @keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
  
   .el-main{
     background-color: $mainBody-color;

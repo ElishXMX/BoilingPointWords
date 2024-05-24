@@ -12,14 +12,13 @@ export const useUserStore = defineStore('user', () => {
     const res = await loginAPI({ account, password })
     console.log('这是登录接口的返回值',res)
     userInfo.value = res
+    console.log('这是登录成功后的用户信息', userInfo.value)
     return userInfo.value
   }
 
   // 退出时清除用户信息
   const clearUserInfo = () => {
     userInfo.value = {}
-    // 执行清除购物车的action
-    
   }
   // 3. 以对象的格式把state和action return
   return {
@@ -28,5 +27,6 @@ export const useUserStore = defineStore('user', () => {
     clearUserInfo
   }
 }, {
-  persist: true,
+  // 4. 开启持久化
+  persist: true
 })
