@@ -64,10 +64,10 @@
   <el-card class="card" shadow="hover" v-if="citeWords.length!=0">
     <template #header>
       <div class="card-header" v-if="judgesNumber.number%2===1">
-        <el-text class="mx-1" size="large" style="font-size: 2rem;">{{currentWord[0].English}}</el-text><br>
+        <el-text class="mx-1" size="large" style="font-size: 2rem;">{{currentWord[0].english}}</el-text><br>
       </div>
       <div class="card-header" v-else>
-        <el-text class="mx-1" size="large" style="font-size: 2rem;">{{currentWord[0].Chinese}}</el-text><br>
+        <el-text class="mx-1" size="large" style="font-size: 2rem;">{{currentWord[0].chinese}}</el-text><br>
       </div>
     </template>
 
@@ -159,7 +159,7 @@ const citeWords = reactive([]); // 当前背诵的单词列表
 
 // import { useCurrentWordStore } from '@/stores/currentWord';
 // const currentWord = useCurrentWordStore();
-const currentWord = reactive([{English: '没有', Chinese: '更多单词哦',remember: false,testTimes: 0}])
+const currentWord = reactive([{english: '没有', chinese: '更多单词哦',remember: false,testTimes: 0}])
 
   function setWord() {
  
@@ -204,37 +204,36 @@ watch(citeWords, () => {
 
 //点击开始背单词按钮，将wantedWords中的数据传递给store
 const onSubmit = () => {
-  if (!wantedWords.book) {
-        $message.error('请选择单词书');
-      } else {
+  
         // 执行开始背单词的逻辑
         filterWords(wantedWords.number, wantedWords.book);
         getJudges();
       }
-}
+
 
 
 const Chinese=reactive([])
 const updateChinese = ()=> {
 //从wordsStore中获取四个不相同的单词中文作为测试卡片内容，并将其添加到Chinese数组中，其中有一个中文与currentWord数组中的中文相同
          if (citeWords.length > 0) {
-          Chinese.push(currentWord[0].Chinese)
+          console.log('这是当前的中文',currentWord[0].chinese);
+          Chinese.push(currentWord[0].chinese)
             const wordsStore = useWordsStore();
             const words = wordsStore.wordsList;
             for (let i = 0; i < 3; i++) {
               const index = Math.floor(Math.random() * words.length);
               //如果中文已经存在，则重新选择
-              if (Chinese.includes(words[index].Chinese)) {
+              if (Chinese.includes(words[index].chinese)) {
                 i--;
               } else {
-                Chinese.push(words[index].Chinese);
+                Chinese.push(words[index].chinese);
               }
             }
             //将Chinese数组的顺序随机打乱
             Chinese.sort(() => Math.random() - 0.5);
             
         } else {
-            Chinese.push({English: '没有', Chinese: '更多单词哦',remember: false,testTimes: 0} )
+            Chinese.push({english: '没有', chinese: '更多单词哦',remember: false,testTimes: 0} )
         }
       }
 
@@ -245,16 +244,16 @@ function cleanChinese() {Chinese.splice(0,Chinese.length)}
 const English=reactive([])
 const updateEnglish = ()=> {
 //从wordsStore中获取四个不相同的单词英文作为测试卡片内容，并将其添加到English数组中，其中有一个中文与currentWord数组中的英文相同
-English.push(currentWord[0].English)
+English.push(currentWord[0].english)
 const wordsStore = useWordsStore();
 const words = wordsStore.wordsList;
 for (let i = 0; i < 3; i++) {
   const index = Math.floor(Math.random() * words.length);
   //如果英文已经存在，则重新选择
-  if (English.includes(words[index].English)) {
+  if (English.includes(words[index].english)) {
     i--;
   } else {
-    English.push(words[index].English);
+    English.push(words[index].english);
   }
   
 }}
@@ -267,7 +266,7 @@ function ifChineseRight(Chinese){
   //延时0.5秒，
   
   numberUsed.value++
-  if (Chinese === currentWord[0].Chinese) {
+  if (Chinese === currentWord[0].chinese) {
     console.log('对');
     //将button的type属性改为success
     buttonType.value='success'
@@ -277,7 +276,7 @@ function ifChineseRight(Chinese){
       //移除当前测试的单词
     currentWord[0].remember = true;
     currentWord[0].testTimes +1
-    console.log(currentWord[0].Chinese);
+    console.log(currentWord[0].chinese);
     removeWordcite(currentWord[0]);}, 450);
    
   } else {
@@ -293,7 +292,7 @@ function ifChineseRight(Chinese){
 
 function ifEnglishRight(English){
   numberUsed.value++
-  if (English === currentWord[0].English) {
+  if (English === currentWord[0].english) {
     console.log('对');
     //将button的type属性改为success
     buttonType.value='success'
@@ -303,7 +302,7 @@ function ifEnglishRight(English){
       //移除当前测试的单词
     currentWord[0].remember = true;
     currentWord[0].testTimes +1
-    console.log(currentWord[0].English);
+    console.log(currentWord[0].english);
     removeWordcite(currentWord[0]);
     }, 450);
    

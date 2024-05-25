@@ -1,7 +1,7 @@
 <template>
   <el-table :data="wordsList" style="width: 100% " :row-class-name="ifRemember">
-    <el-table-column prop="English" label="English" width="300" />
-    <el-table-column prop="Chinese" label="中文" width="300" />
+    <el-table-column prop="english" label="English" width="300" />
+    <el-table-column prop="chinese" label="中文" width="300" />
     <el-table-column
      prop="book" 
      label="单词书" 
@@ -38,9 +38,8 @@ import { useWordsStore} from '@/stores/words'
 const wordsStore = useWordsStore()
 //挂载组件时使用axios请求数据
 
-onMounted(async () => {
-  await wordsStore.getWordsList()
-})
+
+
 
 const { wordsList}=storeToRefs(wordsStore)
 console.log(wordsList)

@@ -1,5 +1,5 @@
 <template>
-  <el-container class="home-container">
+    <el-container class="home-container">
        <!--头部  -->
        <el-header>
         <div>
@@ -17,19 +17,25 @@
         <!-- 页面主体区   -->
         <el-form
           ref="formRef"
-          
+         
           :model="form"
           status-icon
           :rules="rules"
           label-width="auto"
           class="Form"
         >
-        <el-text class="mx-1" style="font-size: 30px;font-weight: bold;margin-bottom: 20px;">登录</el-text>
-          <el-form-item label="账户" prop="account">
+        <el-text class="mx-1" style="font-size: 30px;font-weight: bold;margin-bottom: 20px;">注册账户</el-text>
+          <el-form-item label="创建账户" prop="account">
             <el-input v-model="form.account" />
           </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input v-model="form.password"/>
+          <el-form-item label="设置密码" prop="password">
+            <el-input v-model="form.password"  placeholder="密码为6-14位字符"/>
+          </el-form-item>
+          <el-form-item label="email" prop="email">
+            <el-input v-model="form.email"/>
+          </el-form-item>
+          <el-form-item label="地址" prop="address">
+            <el-input v-model="form.address"/>
           </el-form-item>
           <el-form-item prop="agree" label-width="22px">
           <el-checkbox v-model="form.agree" size="large">
@@ -37,22 +43,21 @@
           </el-checkbox>
         </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="doLogin">
-              点击登录
+            <el-button type="success" @click="doRegister">
+              点击创建账户
             </el-button>
           </el-form-item>
-          <el-form-item>
-            
-              <el-link type="success" :underline="false"><router-link :to="{name:'register'}">还没有账号？点击注册  </router-link></el-link>
-           
-          </el-form-item>
+         
         </el-form>
       
       
       </el-container>
              
    </el-container>
+
   
+    
+
 </template>
 
 <script setup>
@@ -63,12 +68,17 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 const userStore = useUserStore()
 
-// 1. 准备表单对象
+
 const form = ref({
   account: '',
   password: '',
-  agree: true
+  agree: true,
+  email: '',
+  address: '',
 })
+
+
+
 
 // 2. 准备规则对象
 const rules = {
@@ -95,10 +105,9 @@ const rules = {
   ]
 }
 
-// 3. 获取form实例做统一校验
 const formRef = ref(null)
 const router = useRouter()
-const doLogin = () => {
+const doRegister = () => {
   const { account, password } = form.value
   // 调用实例方法
   formRef.value.validate(async (valid) => {
@@ -112,16 +121,17 @@ const doLogin = () => {
       console.log(res.code)
       if (res.code == 0) {
       // 1. 提示用户
-      ElMessage.success('登录成功')
+      ElMessage.success('注册成功，请登录')
       // 2. 跳转到首页
-      router.replace({ path: '/' })
+      router.replace({ path: '/login' })
           }else{
-       ElMessage.error('登录失败') }
+       ElMessage.error('注册失败') }
      
     }
   })
 }
 </script>
+
 
 
 <style scoped lang="scss">
@@ -177,8 +187,7 @@ const doLogin = () => {
 
   .el-form{
     height:400px;
-    width:350px;
-    
+    width:400px;
     background-color:rgba(255,255,255,0.7);
     padding: 20px;
     border-radius: 10px;

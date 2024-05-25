@@ -43,5 +43,7 @@ export const useCiteWordsStore = defineStore('wordsStore',() => {
         randomWord,
         addWord
     }
+
+
 });
 

@@ -1,6 +1,16 @@
 <script setup>
   import layoutAside from '@/views/layout/components/layoutAside.vue'
- 
+  import { useUserStore } from '@/stores/userStore'
+  import { useWordsStore } from '@/stores/words'
+  const wordsStore = useWordsStore()
+  import { onMounted } from 'vue'
+
+
+  const userStore = useUserStore()
+  onMounted(async () => {
+  await wordsStore.getWordsList()
+})
+
 </script>
   
 
@@ -11,9 +21,10 @@
        <!--头部  -->
        <el-header>
         <div>
-          <img src="" alt="">
-          <span>沸点单词</span>
+          
+          <span >沸点单词</span>
         </div>
+        <el-button type="danger" v-if="userStore.userInfo.data">退出登录</el-button>
         
        </el-header>
 

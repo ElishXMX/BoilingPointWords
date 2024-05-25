@@ -5,6 +5,8 @@ import home from '../views/home/index.vue'
 import books from '../views/books/index.vue'
 import cite from '../views/cite/index.vue'
 import test from '../views/test/index.vue'
+import user from '../views/user/index.vue'
+import register from '../views/register/index.vue'
 
 
 const router = createRouter({
@@ -35,6 +37,11 @@ const router = createRouter({
           name: 'test',
           component:test,
         },
+        {
+          path: '/user',
+          name: 'user',
+          component:user,
+        },
       ]
     }
         ,
@@ -43,6 +50,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: login
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: register,
     },
     
    

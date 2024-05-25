@@ -26,6 +26,11 @@
           <el-icon><IEpChecked /></el-icon>
           <span>词汇自测</span>
         </el-menu-item>
+
+        <el-menu-item index="/user" v-if="userStore.userInfo.data">
+          <el-icon><IEpUser /></el-icon>
+          <span>个人信息</span>
+        </el-menu-item>
         
       </el-menu>
     </el-col>
@@ -41,6 +46,8 @@
 </style>
 
 <script  lang="ts" setup>
+import { useUserStore } from '@/stores/userStore'
+const userStore = useUserStore()
 import {
   Document,
   Menu as IconMenu,

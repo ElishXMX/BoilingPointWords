@@ -12,9 +12,9 @@
           clearable
         >
           <el-option label="四级词汇" value="CET4" />
-          <el-option label="四级精选" value="CET4s" />
+          <el-option label="雅思词汇" value="IELTS" />
           <el-option label="六级词汇" value="CET6" />
-          <el-option label="六级精选" value="CET6s" />
+          <el-option label="托福词汇" value="TOEFL" />
         </el-select>
       </el-form-item>
       
@@ -29,13 +29,13 @@
    
 
     <el-card style="width: 300px;height: 400px;" shadow="hover" class="card" v-if="CiteStore.citeWords.length>0">
-        <el-text class="mx-1" size="large" style="font-size: 3rem;">{{currentWord.currentWord[0].English}}</el-text><br>
+        <el-text class="mx-1" size="large" style="font-size: 3rem;">{{currentWord.currentWord[0].english}}</el-text><br>
         <div v-if="judge.show" style="margin-top: 40px;">
           <el-button type="success" @click="ifRemember">记住</el-button>
           <el-button type="info" @click="ifForget">忘记</el-button>
           <el-button type="warning" @click="ifConfuse">困惑</el-button>
         </div>
-        <el-text class="mx-1" v-if="judge.showChinese" style="font-size: 1.5rem;">{{ currentWord.currentWord[0].Chinese }}</el-text><br>
+        <el-text class="mx-1" v-if="judge.showChinese" style="font-size: 1.5rem;">{{ currentWord.currentWord[0].chinese }}</el-text><br>
         <div v-if="judge.showTure" style="margin-top: 40px;">
           <el-button type="success" @click="remember">记对了</el-button>
           <el-button type="info" @click="forget">记错了</el-button>
