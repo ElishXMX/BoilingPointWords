@@ -23,7 +23,7 @@
       { text: '没记住', value: false }]"
       :filter-method="filterRemember"
     />
-    <el-table-column prop="testTimes" label="测试次数" width="120"/>
+   
   </el-table>
 
   </template>

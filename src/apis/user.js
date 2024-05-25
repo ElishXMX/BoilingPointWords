@@ -12,3 +12,17 @@ export const loginAPI = ({ account, password }) => {
   })
 }
 
+
+
+export const regisiterAPI = ({ uid, uname, password }) => { 
+  return request({
+    url: '/register', 
+    method: 'POST',
+    data: {
+      uid,
+      uname,
+      password,
+    }
+  })
+}
+

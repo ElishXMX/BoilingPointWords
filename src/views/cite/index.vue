@@ -55,6 +55,10 @@ import { reactive } from 'vue'
 import { useCiteWordsStore } from '@/stores/wordsStore';
 import {watch} from 'vue'
 import { useCurrentWordStore } from '@/stores/currentWord';
+import axios from 'axios';
+import request  from '@/utils/http';
+import { useUserStore } from '@/stores/userStore';
+const userStore = useUserStore();
 const currentWord = useCurrentWordStore();
 const CiteStore = useCiteWordsStore();
 const wantedWords = reactive({
@@ -103,6 +107,17 @@ const ifConfuse= () => {
 }
 //点击记住按钮，将当前单词从待背单词中移除
 const remember = () => {
+  request({
+    method: 'post',
+    url: '/Menu/recite',
+    data: {
+      uid:userStore.userInfo.uid ,
+      id:currentWord.currentWord[0].id,
+      state:currentWord.currentWord[0].remember,
+    }
+  }).then(res => {
+    console.log(res);
+  })
   CiteStore.removeWord(currentWord.currentWord[0]);
   currentWord.currentWord[0].remember = true;
   judge.show = true;
@@ -111,6 +126,17 @@ const remember = () => {
 }
 //点击忘记按钮，新增两个当前单词到列表中
 const forget = () => {
+  request({
+    method: 'post',
+    url: '/Menu/recite',
+    data: {
+      uid:userStore.userInfo.uid ,
+      id:currentWord.currentWord[0].id,
+      state:currentWord.currentWord[0].remember,
+    }
+  }).then(res => {
+    console.log(res);
+  })
   CiteStore.addWord(currentWord.currentWord[0]);
   currentWord.currentWord[0].remember=false;
   judge.show = true; 
@@ -120,6 +146,17 @@ const forget = () => {
 }
 //点击困惑按钮，新增个当前单词到列表中
 const confuse = () => {
+  request({
+    method: 'post',
+    url: '/Menu/recite',
+    data: {
+      uid:userStore.userInfo.uid ,
+      id:currentWord.currentWord[0].id,
+      state:currentWord.currentWord[0].remember,
+    }
+  }).then(res => {
+    console.log(res);
+  })
   CiteStore.removeWord(currentWord.currentWord[0]);
   CiteStore.addWord(currentWord.currentWord[0]);
   judge.show = true; 

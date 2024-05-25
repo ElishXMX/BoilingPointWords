@@ -5,7 +5,7 @@ import { useUserStore } from '@/stores/userStore'
 import router from   '@/router'
 
 const httpInstance = axios.create({
-baseURL: 'http://192.168.149.57:8081/',
+baseURL: 'http://192.168.149.57:8081/user/',
   //此处需配置项目基地址
   timeout: 5000
 })

@@ -66,8 +66,8 @@ import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-const userStore = useUserStore()
 
+const userStore = useUserStore()
 
 const form = ref({
   account: '',
@@ -116,13 +116,12 @@ const doRegister = () => {
     // 以valid做为判断条件 如果通过校验才执行登录逻辑
     if (valid) {
       // TODO LOGIN
-      const res = await userStore.getUserInfo({ account, password })
+      const res = await userStore.regisiterUser({ account, password })
       console.log(res)
-      console.log(res.code)
-      if (res.code == 0) {
+      console.log(res.data)
+      if (res.data == 0) {
       // 1. 提示用户
       ElMessage.success('注册成功，请登录')
-      // 2. 跳转到首页
       router.replace({ path: '/login' })
           }else{
        ElMessage.error('注册失败') }

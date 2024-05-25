@@ -5,9 +5,10 @@ import { reactive } from 'vue'
 
 
 
+
 export const useCurrentWordStore = defineStore('currentWord', ()=> {
   
-    const currentWord = reactive([{English: '没有', Chinese: '更多单词哦',remember: false}])
+    const currentWord = reactive([{English: '没有', Chinese: '更多单词哦',remember: false,id: 0}])
 
   function setWord() {
     const citeWords = useCiteWordsStore()
