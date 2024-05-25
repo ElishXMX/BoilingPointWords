@@ -1,9 +1,8 @@
 <template>
   <el-card>
     <div class="user-info" style="display: flex;align-items: center;justify-content: left;">
-      <div class="avatar">
-        <img :src="user.avatar" alt="">
-      </div>
+    
+  
       <div class="name">姓名：{{ user.name }}</div>
       <div class="email">邮箱：{{ user.email }}</div>
       <div class="phone">电话：{{ user.phone }}</div>
@@ -56,12 +55,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useUserStore } from '@/stores/userStore'
+const userSt = useUserStore()
 
 const user = ref({
-  name: '张三',
-  email: '123@qq.com',
-  phone: '13800138000',
-  address: '北京市海淀区西二旗',
+  name:userSt.userInfo.account ,
+  email: '',
+  phone: '',
+  address: '',
 })
 
 const handleEdit = () => {

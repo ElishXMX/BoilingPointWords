@@ -4,7 +4,7 @@ import { reactive } from 'vue';
 
 export const useCiteWordsStore = defineStore('wordsStore',() => {
     const citeWords = reactive([]); // 当前背诵的单词列表
-   
+   const continueWord = reactive( ); // 是否继续阅读zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 
     // 筛选单词列表
     function filterWords(number=0 , book) {

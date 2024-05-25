@@ -8,9 +8,9 @@
      width="100" 
      :filters="[
       { text: 'CET4', value: 'CET4' },
-       { text: 'CET4s', value: 'CET4s' }, 
        { text: 'CET6', value: 'CET6' }, 
-       { text: 'CET6s', value: 'CET6s' }]"
+       { text: '雅思词汇', value: 'IELTS' }, 
+       { text: '托福词汇', value: 'TOEFL' }]"
        :filter-method="filterBook"
      />
 

@@ -14,13 +14,12 @@ export const loginAPI = ({ account, password }) => {
 
 
 
-export const regisiterAPI = ({ uid, uname, password }) => { 
+export const regisiterAPI = ({ account, password }) => { 
   return request({
     url: '/register', 
     method: 'POST',
     data: {
-      uid,
-      uname,
+      account,
       password,
     }
   })

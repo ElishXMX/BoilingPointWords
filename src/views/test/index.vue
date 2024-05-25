@@ -8,7 +8,7 @@
     <el-form-item label="知英选中数量">
         <el-input-number type="number" v-model="wantedWords.EnglishNumber" placeholder="知英选中数量" clearable />
     </el-form-item>
-    <el-form-item label="测试时间">
+    <el-form-item label="测试时间/分钟">
         <el-input-number type="number" v-model="wantedWords.time" placeholder="时间" clearable />
     </el-form-item>
       <el-form-item label="单词书">
@@ -18,9 +18,9 @@
           clearable
         >
           <el-option label="四级词汇" value="CET4" />
-          <el-option label="四级精选" value="CET4s" />
           <el-option label="六级词汇" value="CET6" />
-          <el-option label="六级精选" value="CET6s" />
+          <el-option label="雅思词汇" value="IELTS" />
+          <el-option label="托福词汇" value="TOEFL"/>
         </el-select>
       </el-form-item>
       
@@ -48,7 +48,7 @@
 
 
       <el-col :span="8" style="width: 200px;display:inline-block">
-      <el-countdown title="Start to grab" :value="remainTime" />
+      <el-countdown title="剩余时间" :value="remainTime" />
       </el-col>
 
 
@@ -92,9 +92,10 @@
     
     
   </el-card>
-  <el-card v-if="citeWords.length==0">
+  <el-card  shadow="hover">
     检测到您有未完成的测试，是否继续？
     <el-button type="primary" @click="continueTest">CONTINUE</el-button>
+    <el-button type="danger" @click="cancelTest">CANCEL</el-button>
   </el-card>
 
 
@@ -111,21 +112,71 @@ import { onMounted } from 'vue';
 import request from '@/utils/http';
 
 
+function continueTest() {
+  console.log('继续测试');
+  request({
+    url: '/Menu/returnCopy',
+    method: 'get',
+
+}).then(res => {
+  res.data.forEach(item => {
+    console.log(res);
+      console.log('看这里',item);
+     citeWords.push(item);
+    });
+  
+});
+
+}
+
+function cancelTest() {
+  console.log('取消测试');
+  request({
+    url: '/Menu/noreturnCopy',
+    method: 'get',
+}).then(res => {
+  console.log(res);
+  //刷新页面
+  userStore.userInfo.sessionId='nihao'
+  window.location.reload();
+});
+}
+
+const show=ref(false);
+
 onMounted(() => {
   request({
     url: '/Menu/continue',
     method: 'post',
-
     data: {
       uid:userStore.userInfo.uid,
       time:1,
       sessionId:userStore.userInfo.sessionId,
     },
   }).then(res => {
-    console.log(res);
-    console.log('检验是否有考试未完成');
+    console.log('请看这里',res);
+    
+
+    if (res.data==1) {
+      console.log('有未完成的测试');
+      show.value=true;
+    }else{
+      console.log('没有未完成的测试');
+      show.value=false;
+    }
+
   });
 });
+  
+
+
+//     res.data.forEach(item => {
+//       console.log(item);
+//      citeWords.push(item);
+//     });
+//     console.log('检验是否有考试未完成');
+//   });
+// });
 
 //获取wantedWords.Number个数字，其中有wantedWords.EnglishNumber个奇数,将其放入judges数组中，并将其随机排序
 const judges=reactive([])
@@ -153,7 +204,25 @@ function nextJudge() {
 }
 
 const numberUsed = ref(0) // 已使用单词数量
-const remainTime = ref(Date.now() + 1000 * 60 * 60 * 7)
+const remainTime = ref(0) // 剩余时间
+
+const updateTime = ()=> {
+  request({
+    url: '/Menu/test',
+    method: 'post',
+    data: {
+      uid:userStore.userInfo.uid,
+      time:1,
+      sessionId:userStore.userInfo.sessionId,
+    },
+  }).then(res => {
+    remainTime.value = res.data.time;
+    
+
+  });
+
+}
+
 
 const citeWords = reactive([]); // 当前背诵的单词列表
     // 筛选单词列表
@@ -206,6 +275,7 @@ const wantedWords = reactive({
 });
 
 watch(citeWords, () => {
+  updateTime();
   //使用axios请求
   request({
     url: '/Menu/test',
@@ -216,7 +286,7 @@ watch(citeWords, () => {
       sessionId:userStore.userInfo.sessionId,
     },
   }).then(res => {
-    console.log(res);
+    
     console.log('修改列表');
   });
   console.log('citeWords',citeWords);
@@ -228,10 +298,9 @@ watch(citeWords, () => {
   
   nextJudge();
  
-  console.log(judges);
-  console.log(' 开始背单词',judgesNumber.number);
   if (citeWords.length === 0) {
     console.log('没有单词了');
+    wantedWords.number = 0;
   }else{
   updateChinese();
   updateEnglish();
@@ -251,7 +320,7 @@ const onSubmit = () => {
         data: {
           uid:userStore.userInfo.uid,
           time:1,
-          sessionId:'',
+          sessionId:'0',
         },
       }).then(res => {
         console.log(res);
@@ -272,7 +341,6 @@ const onSubmit = () => {
         },
       }).then(res => {
         console.log(res);
-        console.log('修改列表');
       });
     }
 
@@ -338,8 +406,8 @@ function ifChineseRight(Chinese){
       url: '/Menu/ifTimeOut',
       method: 'get',
     }).then(res => {
-      console.log(res);
-      console.log('是否超时');
+      
+      console.log('检验是否超时',res);
     });
     request({
       url: '/Menu/test',

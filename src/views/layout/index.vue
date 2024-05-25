@@ -24,7 +24,7 @@
           
           <span >沸点单词</span>
         </div>
-        <el-button type="danger" v-if="userStore.userInfo.data">退出登录</el-button>
+        <el-button type="danger" v-if="userStore.userInfo.data" @click="userStore.clearUserInfo()">退出登录</el-button>
         
        </el-header>
 
