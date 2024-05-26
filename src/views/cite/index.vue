@@ -55,7 +55,6 @@ import { reactive } from 'vue'
 import { useCiteWordsStore } from '@/stores/wordsStore';
 import {watch} from 'vue'
 import { useCurrentWordStore } from '@/stores/currentWord';
-import axios from 'axios';
 import request  from '@/utils/http';
 import { useUserStore } from '@/stores/userStore';
 const userStore = useUserStore();

@@ -23,7 +23,12 @@ export const useUserStore = defineStore('user', () => {
 
   // 退出时清除用户信息
   const clearUserInfo = () => {
+    //清除本地储存
     userInfo.value = {}
+    location.reload();
+    // localStorage.removeItem('userInfo')
+  
+    console.log('用户信息已清除')
   }
   // 3. 以对象的格式把state和action return
   return {

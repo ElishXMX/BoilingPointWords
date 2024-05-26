@@ -577,7 +577,7 @@ function ifEnglishRight(English){
   }
 
   .card {
-    max-width: 400px;
+    width: 600px;
     text-align: center;
     //左右居中，卡片不重叠
     margin: 0 auto;

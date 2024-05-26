@@ -1,14 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import login from '../views/login/index.vue'
 import layout from '../views/layout/index.vue'
-import home from '../views/home/index.vue'
+
 import books from '../views/books/index.vue'
 import cite from '../views/cite/index.vue'
 import test from '../views/test/index.vue'
 import user from '../views/user/index.vue'
 import register from '../views/register/index.vue'
-
-
+import { useUserStore } from '@/stores/userStore';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -21,11 +20,14 @@ const router = createRouter({
           path: '',
           name: 'home',
           component:books,
+          
+
         },
         
         {
            path: '/books',
           component:books,
+   
         },
         {
           path: '/cite',
@@ -60,6 +62,28 @@ const router = createRouter({
    
   ]
 })
+
+
+//全局路由守卫
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+  const token = userStore.userInfo.data;
+
+  if (token) {
+      next();
+    } else {
+      if(to.path !== '/login' && to.path !== '/register'){
+        next('/login')
+      }else if(to.path === '/register'){
+        next();
+      }else{
+        next();
+      }
+      
+    }
+  }
+
+)
   
 
 

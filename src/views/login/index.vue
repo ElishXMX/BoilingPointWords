@@ -29,7 +29,7 @@
             <el-input v-model="form.account" />
           </el-form-item>
           <el-form-item label="密码" prop="password">
-            <el-input v-model="form.password"/>
+            <el-input v-model="form.password"  show-password/>
           </el-form-item>
           <el-form-item prop="agree" label-width="22px">
           <el-checkbox v-model="form.agree" size="large">
@@ -133,7 +133,7 @@ const doLogin = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(-45deg, #ee7752, #e7acc3, #23a6d5, #23d5ab);
+    background: linear-gradient(-45deg, #f7a48b, #e7acc3, #67c9ed, #f7faf9);
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
   height: 100vh;

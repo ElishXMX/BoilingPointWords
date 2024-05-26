@@ -119,7 +119,7 @@ const doRegister = () => {
       const res = await userStore.regisiterUser({ account, password })
       console.log(res)
       console.log(res.data)
-      if (res.data == 0) {
+      if (res.msg=== 'user')   {
       // 1. 提示用户
       ElMessage.success('注册成功，请登录')
       router.replace({ path: '/login' })

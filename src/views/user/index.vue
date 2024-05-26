@@ -55,6 +55,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import { onMounted } from 'vue'
+import request from '@/utils/http'
 import { useUserStore } from '@/stores/userStore'
 const userSt = useUserStore()
 
@@ -64,6 +66,19 @@ const user = ref({
   phone: '',
   address: '',
 })
+
+onMounted(() => {
+ request({
+    url: '/Menu/showRecord',
+    method: 'post',
+    data: 
+      1,
+    
+}).then((res) => {
+    console.log(res)
+  })
+})
+
 
 const handleEdit = () => {
   console.log('handleEdit')
