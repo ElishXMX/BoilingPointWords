@@ -43,7 +43,7 @@
         <el-button type="info" @click="forget" v-if="judge.showNextForget">下一个</el-button>
         <el-button type="warning" @click="confuse" v-if="judge.showNextConfuse">下一个</el-button>
     </el-card>
-    <el-text class="mx-1" size="large" v-if="judge.showEnd && CiteStore.citeWords.length==0">！恭喜完成所有单词学习！</el-text>
+    <el-card  v-if="judge.showEnd && CiteStore.citeWords.length==0" style="text-align: center;"><el-text class="mx-1" size="large">！恭喜完成所有单词学习！</el-text></el-card>
     </div>
     
     

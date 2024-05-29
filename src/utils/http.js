@@ -3,6 +3,7 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/userStore'
 import router from   '@/router'
+import { reactive } from 'vue'
 
 const httpInstance = axios.create({
 baseURL: 'http://192.168.149.57:3551/user/',
@@ -23,6 +24,7 @@ httpInstance.interceptors.request.use(config => {
   // axios响应式拦截器
   httpInstance.interceptors.response.use(res => res.data, e => {
     const userStore = useUserStore()
+  
     // 统一错误提示
     ElMessage({
       type: 'warning',
