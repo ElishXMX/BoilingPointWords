@@ -31,10 +31,10 @@
           <el-form-item label="设置密码" prop="password">
             <el-input v-model="form.password"  placeholder="密码为6-14位字符"/>
           </el-form-item>
-          <el-form-item label="email" prop="email">
+          <el-form-item label="年级" prop="email">
             <el-input v-model="form.email"/>
           </el-form-item>
-          <el-form-item label="地址" prop="address">
+          <el-form-item label="学校" prop="address">
             <el-input v-model="form.address"/>
           </el-form-item>
           <el-form-item prop="agree" label-width="22px">

@@ -15,6 +15,7 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = res
     console.log('这是登录成功后的用户信息', userInfo.value)
     return userInfo.value
+   
   }
   const regisiterUser = async ({account,password}) => {
     const res = await regisiterAPI({account,password})

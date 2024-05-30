@@ -42,7 +42,7 @@
               </el-icon>
             </div>
           </template>
-          <template #suffix>/{{ wantedWords.number }}</template>
+          <template #suffix>/{{ wantedWords.number+wantedWords.EnglishNumber }}</template>
         </el-statistic>
       </el-col>
 
@@ -56,11 +56,11 @@
   </el-card>
 <!-- 测试卡片 -->
 
-  <el-card class="card" shadow="hover">
+  <el-card class="card" shadow="hover" v-if="judge2==1">
     <template #header>
      
       <div class="card-header" >
-        <el-text class="mx-1" size="large" style="font-size: 2rem;">{{}}</el-text><br>
+        <el-text class="mx-1" size="large" style="font-size: 2rem;">{{question.string}}</el-text><br>
       </div>
       
     </template>
@@ -80,7 +80,7 @@
     
   </el-card>
   <el-card  shadow="hover" 
-   v-if="judge!==0"
+   v-if="judge==100"
    >
     检测到您有未完成的测试，是否继续？
     <el-button type="primary" @click="ifContinueTest">CONTINUE</el-button>
@@ -97,17 +97,27 @@ import request from '@/utils/http'
 import { reactive, ref } from 'vue'
 import { onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
+
+
 const userStore = useUserStore()
 
-
+const remainTime = ref(0)
 
 const ifContinueTest=()=>{
   console.log('continueTest')
+  judge.value=0
   getWord()
 }
 
 const cancelTest=()=>{
   console.log('cancelTest')
+  request({
+    url: '/Menu/nocontinue',
+    method: 'get',
+}).then((res) => {
+  console.log('cancelTest',res)
+  judge.value=0
+})
 }
 
 
@@ -126,6 +136,7 @@ const options=ref([])
 const question=reactive({
   id:0,
   string: '',
+  answer: '',
 })
 
 // 
@@ -139,6 +150,8 @@ const generateList = () => {
       e:wantedWords.EnglishNumber,
       book:wantedWords.book,
     }
+  }).then((res) => {
+    console.log('这是生成列表',res)
   })
 }
 
@@ -153,22 +166,40 @@ const continueTest = () => {
     }
   }).then((res) => {
     console.log('这是是否继续测试',res)
-    judge.value=res.data
+    judge.value=res.code
   })
 }
-
+const judge2=ref(0)
+//获取单词
 const getWord = () => { 
   request({
     url: '/Menu/test',
     method: 'get',
   }).then((res) => {
-    console.log(res)
-    // 显示到测试卡片上
-    console.log(res.data.strings)
+    if(res.code==1 || res.code==0){judge2.value=1}else{judge2.value=0}
+    console.log('这是获取单词',res)
+    console.log(judge2.value)
     options.value=res.data.strings
     question.id=res.data.words.id
-    console.log(question.id)
-    console.log(options)
+   
+    if(res.code==1){
+      //将单词的英文加入到options数组中
+      options.value.push(res.data.words.english)
+      //数组打乱
+      
+      options.value.sort(() => Math.random() - 0.5)
+      question.string=res.data.words.chinese
+      question.answer=res.data.words.english
+     
+      
+  }else if(res.code==0){
+    options.value.push(res.data.words.chinese)
+    options.value.sort(() => Math.random() - 0.5)
+    question.string=res.data.words.english
+    question.answer=res.data.words.chinese
+    
+  }
+ 
   })
 }
 
@@ -180,19 +211,34 @@ const deleteWord = () => {
 }
 // 开始测试
 const onSubmit = () => {
+  request({
+    url: '/Menu/testStart',
+    method: 'post',
+
+    data: {
+      uid: userStore.userInfo.uid,
+      time: wantedWords.time,
+      sessionId:"0",
+    }}).then((res) => {
+    console.log('这是开始测试',res)
+    userStore.userInfo.sessionId=res.sessionId
+  })
+  remainTime.value=wantedWords.time*60
+      
   generateList()
-  getWord()
+  setTimeout(() => {
+  getWord()}, 500)
 
 }
 
 const checkAnswer = (option) => {
-  if (option === question.string) {
+  if (option === question.answer) {
     buttonType.value = 'success'
     //一秒钟后显示下一题
     setTimeout(() => {
       deleteWord()
       getWord()
-    }, 1000)
+    }, 100)
     
     
   } else {
@@ -205,10 +251,26 @@ const checkAnswer = (option) => {
   }
 }
 
+const getTime = () => {
+  request({
+    url: '/Menu/time',
+    method: 'post',
+
+    data: {
+      uid: userStore.userInfo.uid,
+      time: wantedWords.time,
+      sessionId:userStore.userInfo.sessionId ,
+    }
+  }).then((res) => {
+    console.log('这是倒计时',res)
+    
+  })
+}
 
 onMounted(() => {
   continueTest()
   //获取倒计时
+  getTime()
 })
   
 </script>
