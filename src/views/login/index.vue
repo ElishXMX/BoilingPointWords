@@ -127,8 +127,8 @@ const doLogin = () => {
 <style scoped lang="scss">
 .main-container{
     background-color: $mainBody-color;
-    height: 100%;
-    min-height: 100vh;
+    height: 736px;
+   
     //居中
     display: flex;
     justify-content: center;
@@ -193,6 +193,7 @@ const doLogin = () => {
  
   .el-main{
     background-color: $mainBody-color;
+    height: 736px;
   }
  
 </style>

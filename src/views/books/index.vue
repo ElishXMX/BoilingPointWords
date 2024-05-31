@@ -68,7 +68,7 @@ const filterRemember = (value: boolean, row: User, column: TableColumnCtx<User>,
 
 <style>
 .el-table {
-  max-height: 800px;
+  max-height: 690px;
   overflow: auto; 
 
 }

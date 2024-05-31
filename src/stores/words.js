@@ -2,15 +2,22 @@
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { getWordsAPI } from '@/apis/getWordsAPI'
+import request from '@/utils/http'
+import { useUserStore } from './userStore'
+
 
 
 
 
 export const useWordsStore = defineStore('words',() => {
+  const userStore = useUserStore()
+  
  
   const wordsList = reactive([
    
 ])
+
+  
  //axios get words
   const getWordsList = async () => {
    const res= await getWordsAPI()
@@ -27,12 +34,26 @@ export const useWordsStore = defineStore('words',() => {
       wordsList.splice(index, 1)
     }
   }
+
+  function addRecord(question) {
+    request({
+      url: '/Menu/record',
+      method: 'post',
+      data: {
+        id: question.id,
+        uid:userStore.userInfo.id,
+        trueORfalse: question.trueORfalse,
+      }
+    }).then(res => {
+      console.log(res)})
+  }
  
 
   return {
     wordsList,
     removeWord,
-    getWordsList
+    getWordsList,
+    addRecord
   }
 }, {
   // 4. 开启持久化

@@ -1,20 +1,22 @@
 <template>
-  <el-card>
+  <!-- <el-card>
     <div class="user-info" style="display: flex;align-items: center;justify-content: left;">
-      <div class="name">用户名：{{ user.name }}</div>
+      <div class="name">用户名：{{ userSt.userInfo.username }}</div>
     </div>
-  </el-card>
+  </el-card> -->
 
-  <el-card style="margin-top: 20px;">
+  <el-card style="margin-top: 20px;width: 50%;">
     <!-- 历史答题记录 -->
 <div class="history-records">
             <div class="title">历史答题记录</div>
     <div class="records">
-        <el-card class="record" style="margin-top: 20px;">
-          <div class="date">2022-01-01</div>
-          <div class="score">80</div>
+     
+          <el-table :data="records" style="width: 100%">
+            <el-table-column prop="word" label="词汇" />
+            <el-table-column prop="tof" label="对错记录" />
+           
+          </el-table>
 
-        </el-card>
         
   </div>
 
@@ -41,33 +43,22 @@ import request from '@/utils/http'
 import { useUserStore } from '@/stores/userStore'
 const userSt = useUserStore()
 
-const user = ref({
-  name:userSt.userInfo.account ,
-  school:userSt.userInfo.school,
-  level:userSt.userInfo.level
-})
 
+const records = ref()
 onMounted(() => {
  request({
     url: '/Menu/showRecord',
     method: 'post',
-    data: 
-      1,
-    
+   data: {
+     num: userSt.userInfo.uid
+    }
 }).then((res) => {
-    console.log(res)
+    console.log('记录',res)
+    records.value = res.data
   })
 })
 
 
-const handleEdit = () => {
-  console.log('handleEdit')
-  
-}
 
-const handleDelete = () => {
-  console.log('handleDelete')
-
-}
 
 </script>

@@ -31,7 +31,7 @@
   </el-card>
 
 <!-- 统计测试得分 -->
-<el-card class="card">
+<el-card class="card" v-if="judge!=100">
       <el-col :span="6" style="width: 200px;display:inline-block">
         <el-statistic :value="numberUsed">
           <template #title>
@@ -97,11 +97,15 @@ import request from '@/utils/http'
 import { reactive, ref } from 'vue'
 import { onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
+import { useWordsStore } from '@/stores/words';
+
+
+const wordsStore = useWordsStore()
 
 
 const userStore = useUserStore()
 
-const remainTime = ref(0)
+const numberUsed = ref(0)
 
 const ifContinueTest=()=>{
   console.log('continueTest')
@@ -131,15 +135,40 @@ const wantedWords = reactive({
   time: 0,
   book: 'CET4', 
 })
+const remainTime = ref(0)
 
 const options=ref([])
 const question=reactive({
   id:0,
   string: '',
   answer: '',
+  trueORfalse: false,
 })
 
 // 
+// 开始测试
+const onSubmit = () => {
+  remainTime.value = Date.now() + wantedWords.time * 60 * 1000
+  request({
+    url: '/Menu/testStart',
+    method: 'post',
+
+    data: {
+      uid: userStore.userInfo.uid,
+      time: wantedWords.time,
+      sessionId:"0",
+    }}).then((res) => {
+    console.log('这是开始测试',res)
+    userStore.userInfo.sessionId=res.sessionId
+   
+  })
+  
+      
+  generateList()
+  setTimeout(() => {
+  getWord()}, 500)
+
+}
 //发送axios请求
 const generateList = () => {
    request({
@@ -209,29 +238,10 @@ const deleteWord = () => {
   question.id=0
   
 }
-// 开始测试
-const onSubmit = () => {
-  request({
-    url: '/Menu/testStart',
-    method: 'post',
 
-    data: {
-      uid: userStore.userInfo.uid,
-      time: wantedWords.time,
-      sessionId:"0",
-    }}).then((res) => {
-    console.log('这是开始测试',res)
-    userStore.userInfo.sessionId=res.sessionId
-  })
-  remainTime.value=wantedWords.time*60
-      
-  generateList()
-  setTimeout(() => {
-  getWord()}, 500)
-
-}
 
 const checkAnswer = (option) => {
+  numberUsed.value += 1
   if (option === question.answer) {
     buttonType.value = 'success'
     //一秒钟后显示下一题
@@ -239,6 +249,8 @@ const checkAnswer = (option) => {
       deleteWord()
       getWord()
     }, 100)
+    question.trueORfalse=true
+    wordsStore.addRecord(question)
     
     
   } else {
@@ -247,6 +259,7 @@ const checkAnswer = (option) => {
       deleteWord()
       getWord()
     }, 1000)
+    wordsStore.addRecord(question)
     
   }
 }
@@ -283,14 +296,14 @@ onMounted(() => {
   }
 
   .card {
-    width: 600px;
+    width: 500px;
     text-align: center;
     //左右居中，卡片不重叠
     margin: 0 auto;
     margin-top: 20px;
     // 卡片阴影
     //行高
-    line-height: 3.5;
+    line-height: 3;
     background-color: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
 

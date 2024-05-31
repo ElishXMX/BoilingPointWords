@@ -86,7 +86,7 @@
     background: linear-gradient(-45deg, #faf4c5, #e8d7dd, #cbe9f4, #eae4e4);
   background-size: 400% 400%;
   animation: gradient 10s ease infinite;
-  height: 100vh;
+  height: 736px;
   }
   @keyframes gradient {
   0% {
@@ -103,10 +103,7 @@
   .el-main{
     background-color: $mainBody-color;
   }
-  .el-container{
-    height: 100%;
-   
-  }
+  
  
 </style>
 
